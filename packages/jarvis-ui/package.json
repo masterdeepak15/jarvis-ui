@@ -13,7 +13,9 @@
     },
     "./styles": "./dist/jarvis-ui.css"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite build --watch",
     "build": "vite build",
@@ -44,6 +46,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.19.0",
     "leaflet": "^1.9.4",
+    "react-day-picker": "^10.0.1",
     "react-leaflet": "^4.2.1",
     "recharts": "^2.12.0"
   }
