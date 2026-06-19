@@ -1,0 +1,1456 @@
+/* ================================================================
+   JARVIS UI — MASTER STYLESHEET
+   jarvis-ui.css  |  v1.0.0
+   
+   CONTENTS:
+   1.  CSS Custom Properties (design tokens)
+   2.  Keyframe Animation Library
+   3.  Base / Reset utilities
+   4.  Color token classes
+   5.  Size classes
+   6.  Variant classes
+   7.  State modifier classes
+   8.  Animation speed classes
+   9.  JCard frame styles (S1–S9)
+   10. JButton shapes
+   11. HUD utility components (dot-seq, waveform, tick-bar, scan-line)
+   12. Typography utilities
+   13. Reduced-motion override
+================================================================ */
+
+
+/* ================================================================
+   1. CSS CUSTOM PROPERTIES
+================================================================ */
+:root {
+  /* — Primary HUD colors — */
+  --j-cyan:        var(--j-accent);
+  --j-cyan-mid:    var(--j-accent-mid);
+  --j-cyan-dim:    var(--j-accent-dim);
+  --j-cyan-deep:   var(--j-accent-deep);
+  --j-cyan-glow:    var(--j-accent-25);
+  --j-cyan-glow-sm: var(--j-accent-12);
+
+  /* — Semantic colors — */
+  --j-amber:       var(--j-warn);
+  --j-amber-dim:   var(--j-warn-12);
+  --j-amber-glow:  var(--j-warn-25);
+  --j-red:         var(--j-err);
+  --j-red-dim:     var(--j-err-12);
+  --j-red-glow:    var(--j-err-25);
+  --j-green:       var(--j-ok);
+  --j-green-dim:   var(--j-ok-12);
+
+  /* — Backgrounds — */
+  --j-bg:          var(--j-bg);
+  --j-bg-card:     var(--j-bg-card);
+  --j-bg-card-alt: var(--j-bg-card-alt);
+  --j-bg-danger:   var(--j-bg-danger);
+
+  /* — Borders — */
+  --j-border:      var(--j-border);
+  --j-border-mid:  var(--j-border-mid);
+  --j-border-full: var(--j-border-full);
+  --j-border-dim:  var(--j-border-dim);
+
+  /* — Typography — */
+  --j-font:        'Courier New', 'Lucida Console', monospace;
+  --j-letter-xs:   0.10em;
+  --j-letter-sm:   0.12em;
+  --j-letter-lg:   0.16em;
+
+  /* — Sizing — */
+  --j-h-xs:  28px;
+  --j-h-sm:  34px;
+  --j-h-md:  40px;
+  --j-h-lg:  48px;
+  --j-h-xl:  56px;
+
+  /* — Corner notch size — */
+  --j-notch: 14px;
+  --j-notch-lg: 20px;
+
+  /* — Animation durations — */
+  --j-dur-scan:    3.5s;
+  --j-dur-pulse:   2.8s;
+  --j-dur-blink:   1.2s;
+  --j-dur-spin:    4s;
+  --j-dur-shine:   2.4s;
+  --j-dur-corner:  3.0s;
+}
+
+
+/* ================================================================
+   2. KEYFRAME ANIMATION LIBRARY
+================================================================ */
+
+/* — Scan line: sweeps top → bottom — */
+@keyframes j-scan-v {
+  0%   { top: -2px;   opacity: 0;   }
+  8%   { opacity: 0.9; }
+  88%  { opacity: 0.5; }
+  100% { top: 100%;   opacity: 0;   }
+}
+
+/* — Scan line: sweeps left → right — */
+@keyframes j-scan-h {
+  0%   { left: -2px;  opacity: 0;   }
+  8%   { opacity: 0.8; }
+  88%  { opacity: 0.4; }
+  100% { left: 100%;  opacity: 0;   }
+}
+
+/* — Opacity pulse: breathes in/out — */
+@keyframes j-pulse {
+  0%, 100% { opacity: 1;   }
+  50%      { opacity: 0.2; }
+}
+
+/* — Glow pulse: box-shadow throbs — */
+@keyframes j-glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px var(--j-cyan-glow-sm); }
+  50%      { box-shadow: 0 0 16px var(--j-cyan-glow), 0 0 32px var(--j-cyan-glow-sm); }
+}
+
+/* — Danger border pulse — */
+@keyframes j-danger-pulse {
+  0%, 100% { border-color: var(--j-err-25); box-shadow: none; }
+  50%      { border-color: var(--j-err);    box-shadow: 0 0 18px var(--j-err-25); }
+}
+
+/* — Warning border pulse — */
+@keyframes j-warn-pulse {
+  0%, 100% { border-color: var(--j-warn-25); box-shadow: none; }
+  50%      { border-color: var(--j-warn);    box-shadow: 0 0 14px var(--j-warn-25); }
+}
+
+/* — Hard digital blink — */
+@keyframes j-blink {
+  0%, 49%, 100% { opacity: 1; }
+  50%, 99%      { opacity: 0; }
+}
+
+/* — Slow organic blink — */
+@keyframes j-blink-slow {
+  0%, 100% { opacity: 0.9; }
+  45%      { opacity: 0.9; }
+  55%      { opacity: 0.1; }
+}
+
+/* — Clockwise spin — */
+@keyframes j-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* — Counter-clockwise spin — */
+@keyframes j-spin-rev {
+  to { transform: rotate(-360deg); }
+}
+
+/* — Radar conic sweep — */
+@keyframes j-radar {
+  to { transform: rotate(360deg); }
+}
+
+/* — Marching dot — */
+@keyframes j-dot-march {
+  0%, 100% { opacity: 0.15; }
+  50%      { opacity: 1;    }
+}
+
+/* — Bar grow from 0 to --j-w — */
+@keyframes j-bar-grow {
+  from { width: 0%; }
+  to   { width: var(--j-w, 100%); }
+}
+
+/* — Waveform bar scale — */
+@keyframes j-wave {
+  0%, 100% { transform: scaleY(0.25); }
+  50%      { transform: scaleY(1);    }
+}
+
+/* — Button scan shine — */
+@keyframes j-btn-shine {
+  0%   { left: -60px; }
+  100% { left: 110%;  }
+}
+
+/* — Corner bracket draw in — */
+@keyframes j-corner-draw {
+  0%   { width: 0;    height: 0;    }
+  40%  { width: 14px; height: 0;    }
+  100% { width: 14px; height: 14px; }
+}
+
+/* — Corner bracket blink — */
+@keyframes j-corner-blink {
+  0%, 100% { opacity: 1;   }
+  50%      { opacity: 0.2; }
+}
+
+/* — Glitch text shift — */
+@keyframes j-glitch {
+  0%, 90%, 100%  { transform: none;           opacity: 1;   }
+  92%            { transform: translateX(-3px); opacity: 0.8; }
+  94%            { transform: translateX(3px);  opacity: 0.9; }
+  96%            { transform: translateX(-1px); opacity: 0.85; }
+  98%            { transform: none;            opacity: 1;   }
+}
+
+/* — Slide in from left — */
+@keyframes j-slide-in {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+/* — Tab line draw — */
+@keyframes j-tab-draw {
+  from { width: 0; }
+  to   { width: var(--j-tab-w, 50px); }
+}
+
+/* — Float: subtle vertical oscillation — */
+@keyframes j-float {
+  0%, 100% { transform: translateY(0);   }
+  50%      { transform: translateY(-3px); }
+}
+
+
+/* ================================================================
+   3. BASE UTILITIES
+================================================================ */
+.j-root {
+  background: var(--j-bg);
+  color: var(--j-text-primary);
+  font-family: var(--j-font);
+  min-height: 100vh;
+}
+
+.j-relative  { position: relative; }
+.j-overflow  { overflow: hidden; }
+.j-flex      { display: flex; align-items: center; }
+.j-flex-col  { display: flex; flex-direction: column; }
+.j-gap-sm    { gap: 8px; }
+.j-gap-md    { gap: 12px; }
+.j-gap-lg    { gap: 16px; }
+
+
+/* ================================================================
+   4. COLOR TOKEN CLASSES
+   Applied to .j-color-* to drive --j-accent custom property
+   All child components read --j-accent for their active color
+================================================================ */
+.j-color-cyan  { --j-accent: var(--j-cyan);  --j-accent-dim: var(--j-cyan-glow-sm);  --j-accent-glow: var(--j-cyan-glow); }
+.j-color-blue  { --j-accent: var(--j-cyan-deep); --j-accent-dim: var(--j-accent-12); --j-accent-glow: var(--j-accent-25); }
+.j-color-amber { --j-accent: var(--j-amber); --j-accent-dim: var(--j-warn-12);  --j-accent-glow: var(--j-warn-25); }
+.j-color-red   { --j-accent: var(--j-red);   --j-accent-dim: var(--j-err-12);   --j-accent-glow: var(--j-err-25); }
+.j-color-green { --j-accent: var(--j-green); --j-accent-dim: var(--j-ok-12);    --j-accent-glow: var(--j-ok-25); }
+.j-color-ghost { --j-accent: var(--j-text-muted); --j-accent-dim: var(--j-accent-05); --j-accent-glow: var(--j-accent-08); }
+.j-color-white { --j-accent: var(--j-text-primary); --j-accent-dim: var(--j-accent-08); --j-accent-glow: var(--j-accent-18); }
+
+
+/* ================================================================
+   5. SIZE CLASSES
+================================================================ */
+.j-size-xs { --j-h: var(--j-h-xs); --j-px: 10px; --j-font-sz: 10px; }
+.j-size-sm { --j-h: var(--j-h-sm); --j-px: 14px; --j-font-sz: 11px; }
+.j-size-md { --j-h: var(--j-h-md); --j-px: 20px; --j-font-sz: 12px; }
+.j-size-lg { --j-h: var(--j-h-lg); --j-px: 26px; --j-font-sz: 13px; }
+.j-size-xl { --j-h: var(--j-h-xl); --j-px: 32px; --j-font-sz: 14px; }
+
+
+/* ================================================================
+   6. VARIANT CLASSES (button/badge visual treatment)
+================================================================ */
+.j-variant-solid {
+  background: var(--j-accent);
+  color: var(--j-bg);
+  border: 1px solid var(--j-accent);
+}
+.j-variant-outline {
+  background: var(--j-accent-dim);
+  color: var(--j-accent);
+  border: 1px solid var(--j-accent);
+}
+.j-variant-ghost {
+  background: transparent;
+  color: var(--j-accent);
+  border: 1px dashed color-mix(in srgb, var(--j-accent) 35%, transparent);
+}
+.j-variant-danger {
+  background: var(--j-red-dim);
+  color: var(--j-red);
+  border: 1px solid var(--j-red);
+  animation: j-danger-pulse var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-variant-scan {
+  background: var(--j-accent);
+  color: var(--j-bg);
+  border: none;
+  overflow: hidden;
+}
+
+
+/* ================================================================
+   7. STATE MODIFIER CLASSES
+   Add to any component to override color + animation
+================================================================ */
+.j-state-idle {
+  --j-accent: var(--j-accent-35);
+  --j-accent-glow: var(--j-accent-08);
+  opacity: 0.6;
+}
+.j-state-active {
+  --j-accent: var(--j-cyan);
+  animation-play-state: running;
+}
+.j-state-processing {
+  --j-accent: var(--j-cyan);
+  --j-dur-scan: 1.8s;
+  --j-dur-pulse: 1.4s;
+}
+.j-state-warning {
+  --j-accent: var(--j-amber);
+  --j-accent-dim: var(--j-amber-dim);
+  --j-accent-glow: var(--j-amber-glow);
+}
+.j-state-error {
+  --j-accent: var(--j-red);
+  --j-accent-dim: var(--j-red-dim);
+  --j-accent-glow: var(--j-red-glow);
+  --j-dur-pulse: 1.2s;
+  --j-dur-blink: 0.6s;
+}
+.j-state-success {
+  --j-accent: var(--j-green);
+  --j-accent-dim: var(--j-green-dim);
+  --j-accent-glow: var(--j-ok-25);
+}
+
+
+/* ================================================================
+   8. ANIMATION SPEED CLASSES
+================================================================ */
+.j-anim-off  * { animation: none !important; transition: none !important; }
+.j-anim-slow   { --j-dur-scan: 7s; --j-dur-pulse: 5.6s; --j-dur-spin: 8s; --j-dur-shine: 4.8s; }
+.j-anim-normal { /* default, no override needed */ }
+.j-anim-fast   { --j-dur-scan: 2s; --j-dur-pulse: 1.4s; --j-dur-spin: 2s; --j-dur-shine: 1.2s; }
+
+
+/* ================================================================
+   9. JCARD FRAME STYLES
+================================================================ */
+
+/* — Shared card base — */
+.j-card {
+  position: relative;
+  background: var(--j-bg-card);
+  padding: 14px 16px;
+  overflow: hidden;
+  font-family: var(--j-font);
+  color: var(--j-text-primary);
+}
+
+/* ── S1: CORNER BRACKET ─────────────────────────────────────── */
+.j-card-s1 {
+  box-shadow: inset 0 0 30px var(--j-accent-05);
+}
+
+.j-card-s1 .j-c-tl,
+.j-card-s1 .j-c-tr,
+.j-card-s1 .j-c-bl,
+.j-card-s1 .j-c-br {
+  position: absolute;
+  width: 14px; height: 14px;
+  border-color: var(--j-accent);
+  border-style: solid;
+  /* glow behind each bracket */
+  filter: drop-shadow(0 0 3px var(--j-accent));
+}
+.j-card-s1 .j-c-tl { top: 0; left: 0;  border-width: 2px 0 0 2px; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 0.0s; }
+.j-card-s1 .j-c-tr { top: 0; right: 0; border-width: 2px 2px 0 0; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 0.5s; }
+.j-card-s1 .j-c-bl { bottom: 0; left: 0;  border-width: 0 0 2px 2px; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 1.0s; }
+.j-card-s1 .j-c-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 1.5s; }
+
+.j-card-s1 .j-inner-border {
+  position: absolute; inset: 0;
+  border: 1px solid var(--j-border-dim);
+  pointer-events: none;
+  box-shadow: inset 0 0 12px var(--j-accent-05), 0 0 6px var(--j-accent-08);
+}
+
+/* ── S2: NOTCHED CORNERS ────────────────────────────────────── */
+@keyframes j-s2-glow {
+  0%, 100% {
+    box-shadow: 0 0 6px var(--j-accent-08), inset 0 0 16px var(--j-accent-05);
+    border-color: var(--j-border);
+  }
+  50% {
+    box-shadow: 0 0 18px var(--j-accent-25), 0 0 40px var(--j-accent-12), inset 0 0 24px var(--j-accent-08);
+    border-color: var(--j-border-mid);
+  }
+}
+.j-card-s2 {
+  clip-path: polygon(
+    var(--j-notch-lg) 0%,
+    100% 0%,
+    100% calc(100% - var(--j-notch-lg)),
+    calc(100% - var(--j-notch-lg)) 100%,
+    0% 100%,
+    0% var(--j-notch-lg)
+  );
+}
+.j-card-s2 .j-notch-border {
+  position: absolute; inset: 0;
+  clip-path: polygon(
+    var(--j-notch-lg) 0%,
+    100% 0%,
+    100% calc(100% - var(--j-notch-lg)),
+    calc(100% - var(--j-notch-lg)) 100%,
+    0% 100%,
+    0% var(--j-notch-lg)
+  );
+  border: 1px solid var(--j-border);
+  animation: j-s2-glow var(--j-dur-pulse) ease-in-out infinite;
+  pointer-events: none;
+}
+.j-card-s2 .j-tri-tl {
+  position: absolute; top: 0; left: 0;
+  border: var(--j-notch-lg) solid transparent;
+  border-top-color: var(--j-accent);
+  border-left-color: var(--j-accent);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-card-s2 .j-tri-br {
+  position: absolute; bottom: 0; right: 0;
+  border: var(--j-notch-lg) solid transparent;
+  border-bottom-color: var(--j-accent);
+  border-right-color: var(--j-accent);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite 0.5s;
+}
+
+/* ── S3: SIDE RAIL ──────────────────────────────────────────── */
+@keyframes j-s3-ambient {
+  0%, 100% { box-shadow: -2px 0 12px var(--j-accent-08), inset 2px 0 12px var(--j-accent-05); }
+  50%      { box-shadow: -2px 0 24px var(--j-accent-18), inset 2px 0 20px var(--j-accent-08); }
+}
+.j-card-s3 {
+  border-top: 1px solid var(--j-border);
+  border-bottom: 1px solid var(--j-border-dim);
+  animation: j-s3-ambient var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-card-s3 .j-rail {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 3px;
+  background: var(--j-accent);
+  box-shadow: 0 0 8px var(--j-accent);
+  clip-path: polygon(0 8px, 3px 0, 3px 100%, 0 calc(100% - 8px));
+}
+.j-card-s3 .j-tab-top {
+  position: absolute; top: -1px; left: 12px;
+  height: 2px;
+  width: 0;
+  background: var(--j-accent);
+  box-shadow: 0 0 6px var(--j-accent);
+  animation: j-tab-draw 1.8s ease-out forwards;
+  --j-tab-w: 50px;
+}
+.j-card-s3 .j-tab-bot {
+  position: absolute; bottom: -1px; right: 12px;
+  height: 2px;
+  width: 0;
+  background: var(--j-accent);
+  animation: j-tab-draw 1.8s ease-out 0.3s forwards;
+  --j-tab-w: 30px;
+}
+
+/* ── S4: GLOW BORDER ────────────────────────────────────────── */
+@keyframes j-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 6px var(--j-accent-08), 0 0 12px var(--j-accent-05), inset 0 0 20px var(--j-accent-05);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--j-accent-25), 0 0 40px var(--j-accent-12), inset 0 0 30px var(--j-accent-08);
+  }
+}
+.j-card-s4 {
+  clip-path: polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px);
+  border: 1px solid var(--j-accent);
+  animation: j-glow-pulse var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-card-s4 .j-inner-radial {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--j-accent-dim) 0%, transparent 65%);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── S5: PARTIAL BORDER ─────────────────────────────────────── */
+@keyframes j-s5-corner-glow {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 3px var(--j-accent));
+    box-shadow: 0 0 8px var(--j-accent-glow);
+  }
+  50% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 1px var(--j-accent));
+    box-shadow: none;
+  }
+}
+.j-card-s5 { /* corners handled by child elements */ }
+
+.j-card-s5 .j-pb-tl {
+  position: absolute; top: 0; left: 0;
+  width: 28px; height: 28px;
+  border-top: 1px solid var(--j-accent);
+  border-left: 1px solid var(--j-accent);
+  animation: j-s5-corner-glow 2.5s ease-in-out infinite;
+}
+.j-card-s5 .j-pb-br {
+  position: absolute; bottom: 0; right: 0;
+  width: 28px; height: 28px;
+  border-bottom: 1px solid var(--j-accent);
+  border-right: 1px solid var(--j-accent);
+  animation: j-s5-corner-glow 2.5s ease-in-out infinite 0.5s;
+}
+.j-card-s5 .j-pb-roving-dot {
+  position: absolute; top: -2px; left: 0;
+  width: 4px; height: 4px;
+  background: var(--j-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--j-accent);
+  animation: j-scan-h var(--j-dur-scan) ease-in-out infinite;
+}
+
+/* ── S6: DANGER PULSE ───────────────────────────────────────── */
+.j-card-s6 {
+  background: var(--j-bg-danger);
+  clip-path: polygon(
+    var(--j-notch-lg) 0%,
+    100% 0%,
+    100% calc(100% - var(--j-notch-lg)),
+    calc(100% - var(--j-notch-lg)) 100%,
+    0% 100%,
+    0% var(--j-notch-lg)
+  );
+  border: 1px solid var(--j-err-25);
+  animation: j-danger-pulse var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-card-s6 .j-tri-tl {
+  position: absolute; top: 0; left: 0;
+  border: var(--j-notch-lg) solid transparent;
+  border-top-color: var(--j-red);
+  border-left-color: var(--j-red);
+  animation: j-blink-slow 1s ease-in-out infinite;
+}
+
+/* ── S7: HEXAGONAL ──────────────────────────────────────────── */
+@keyframes j-hex-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--j-accent)) drop-shadow(0 0 8px var(--j-accent-08)); }
+  50%      { filter: drop-shadow(0 0 10px var(--j-accent)) drop-shadow(0 0 20px var(--j-accent-25)); }
+}
+.j-card-s7 {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  aspect-ratio: 1 / 1.15;
+  animation: j-hex-glow var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-card-s7::before {
+  content: '';
+  position: absolute; inset: 0;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border: 2px solid var(--j-accent);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite;
+  pointer-events: none;
+}
+.j-card-s7 .j-hex-ring {
+  position: absolute; inset: 12px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-top-color: var(--j-accent);
+  border-bottom-color: color-mix(in srgb, var(--j-accent) 40%, transparent);
+  animation: j-spin var(--j-dur-spin) linear infinite;
+  box-shadow: 0 0 6px var(--j-accent-glow);
+}
+
+/* ── S8: RADAR CIRCULAR ─────────────────────────────────────── */
+@keyframes j-radar-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--j-accent-08),  inset 0 0 20px var(--j-accent-05); }
+  50%      { box-shadow: 0 0 22px var(--j-accent-25), inset 0 0 30px var(--j-accent-08); }
+}
+.j-card-s8 {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--j-border);
+  animation: j-radar-glow var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-card-s8 .j-radar-sweep {
+  position: absolute; inset: 0;
+  background: conic-gradient(from 0deg, transparent 82%, var(--j-accent-dim) 100%);
+  animation: j-radar var(--j-dur-spin) linear infinite;
+}
+.j-card-s8 .j-radar-r1 {
+  position: absolute; border-radius: 50%;
+  width: 88%; height: 88%;
+  border: 1px solid var(--j-border);
+  animation: j-spin 8s linear infinite;
+  top: 6%; left: 6%;
+}
+.j-card-s8 .j-radar-r2 {
+  position: absolute; border-radius: 50%;
+  width: 66%; height: 66%;
+  border: 1px dashed var(--j-border-dim);
+  animation: j-spin-rev 5s linear infinite;
+  top: 17%; left: 17%;
+}
+.j-card-s8 .j-radar-r3 {
+  position: absolute; border-radius: 50%;
+  width: 44%; height: 44%;
+  border: 1px solid var(--j-border-mid);
+  border-right-color: transparent;
+  animation: j-spin 3s linear infinite;
+  top: 28%; left: 28%;
+}
+.j-card-s8 .j-radar-center {
+  position: relative; z-index: 1;
+  width: 7px; height: 7px;
+  background: var(--j-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--j-accent);
+}
+.j-card-s8 .j-radar-ping {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--j-accent);
+  box-shadow: 0 0 6px var(--j-accent);
+  animation: j-blink-slow 2s ease-in-out infinite;
+}
+
+/* ── S9: DOUBLE FRAME ───────────────────────────────────────── */
+@keyframes j-s9-glow {
+  0%, 100% {
+    box-shadow: 0 0 6px var(--j-accent-08), inset 0 0 14px var(--j-accent-05);
+  }
+  50% {
+    box-shadow: 0 0 16px var(--j-accent-25), 0 0 32px var(--j-accent-12), inset 0 0 20px var(--j-accent-08);
+  }
+}
+.j-card-s9 {
+  clip-path: polygon(14px 0%, 100% 0%, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0% 100%, 0% 14px);
+  border: 1px solid var(--j-border-mid);
+  padding: 3px;
+  animation: j-s9-glow var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-card-s9 .j-inner-frame {
+  background: var(--j-bg-card);
+  clip-path: polygon(11px 0%, 100% 0%, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0% 100%, 0% 11px);
+  border: 1px solid var(--j-border);
+  padding: 12px 14px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.j-card-s9 .j-df-corner {
+  position: absolute; top: 3px; left: 3px;
+  width: 10px; height: 10px;
+  border-top: 1.5px solid var(--j-accent);
+  border-left: 1.5px solid var(--j-accent);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite;
+}
+
+
+/* ================================================================
+   SHARED CARD SUBCOMPONENTS
+   Reusable inside any card style
+================================================================ */
+
+/* Scan line overlay */
+.j-scan-v {
+  position: absolute; left: 0; right: 0;
+  height: 1px; top: -1px;
+  background: linear-gradient(90deg, transparent 0%, var(--j-accent) 40%, var(--j-accent) 60%, transparent 100%);
+  box-shadow: 0 0 8px var(--j-accent);
+  animation: j-scan-v var(--j-dur-scan) ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Horizontal scan line */
+.j-scan-h {
+  position: absolute; top: 0; bottom: 0;
+  width: 2px; left: -2px;
+  background: linear-gradient(180deg, transparent, var(--j-accent), transparent);
+  box-shadow: 0 0 8px var(--j-accent);
+  animation: j-scan-h calc(var(--j-dur-scan) * 1.4) ease-in-out infinite 2s;
+  pointer-events: none;
+}
+
+
+/* ================================================================
+   10. JBUTTON SHAPES
+================================================================ */
+
+/* — Button base reset — */
+.j-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-family: var(--j-font);
+  white-space: nowrap;
+}
+.j-btn .j-btn-label {
+  position: relative; z-index: 2;
+  font-size: var(--j-font-sz, 12px);
+  font-weight: 600;
+  letter-spacing: var(--j-letter-sm);
+  text-transform: uppercase;
+  color: var(--j-accent);
+  padding: 0 var(--j-px, 20px);
+  height: var(--j-h, var(--j-h-md));
+  display: flex; align-items: center;
+}
+/* Scan shine overlay (shared) */
+.j-btn .j-btn-shine {
+  position: absolute; top: 0; bottom: 0;
+  width: 50px; left: -60px;
+  background: linear-gradient(90deg, transparent, var(--j-accent-25), transparent);
+  pointer-events: none; z-index: 3;
+  animation: j-btn-shine var(--j-dur-shine) ease-in-out infinite;
+}
+/* Corner ticks (shared) */
+.j-btn .j-btn-c {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-color: var(--j-accent);
+  border-style: solid;
+  z-index: 2;
+}
+.j-btn .j-btn-c.tl { top:0; left:0;  border-width:1px 0 0 1px; }
+.j-btn .j-btn-c.tr { top:0; right:0; border-width:1px 1px 0 0; }
+.j-btn .j-btn-c.bl { bottom:0; left:0;  border-width:0 0 1px 1px; }
+.j-btn .j-btn-c.br { bottom:0; right:0; border-width:0 1px 1px 0; }
+
+/* ── Left Notch ─────────────────────────────────────────────── */
+.j-btn-left-notch .j-btn-bg {
+  position: absolute; inset: 0;
+}
+/* SVG drawn at runtime by the component */
+
+/* ── Parallelogram ──────────────────────────────────────────── */
+.j-btn-parallelogram {
+  transform: skewX(-11deg);
+}
+.j-btn-parallelogram .j-btn-label {
+  transform: skewX(11deg);
+}
+.j-btn-parallelogram .j-btn-bg-fill {
+  position: absolute; inset: 0;
+  background: var(--j-accent-dim);
+  border: 1px solid var(--j-border);
+}
+.j-btn-parallelogram .j-btn-rail {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 3px;
+  background: var(--j-accent);
+  box-shadow: 0 0 8px var(--j-accent);
+}
+
+/* ── Ghost Skew ─────────────────────────────────────────────── */
+.j-btn-ghost-skew {
+  transform: skewX(-11deg);
+}
+.j-btn-ghost-skew .j-btn-label {
+  transform: skewX(11deg);
+  color: color-mix(in srgb, var(--j-accent) 55%, transparent);
+}
+.j-btn-ghost-skew .j-btn-bg-fill {
+  position: absolute; inset: 0;
+  background: transparent;
+  border: 1px dashed color-mix(in srgb, var(--j-accent) 30%, transparent);
+}
+
+/* ── Bracket Frame ──────────────────────────────────────────── */
+.j-btn-bracket .j-btn-bg-fill {
+  position: absolute; inset: 0;
+}
+.j-btn-bracket .j-btn-bg-fill::before,
+.j-btn-bracket .j-btn-bg-fill::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0;
+  width: 7px;
+  border-color: var(--j-accent);
+  border-style: solid;
+}
+.j-btn-bracket .j-btn-bg-fill::before { left: 0;  border-width: 1px 0 1px 2px; }
+.j-btn-bracket .j-btn-bg-fill::after  { right: 0; border-width: 1px 2px 1px 0; }
+.j-btn-bracket .j-btn-top-line,
+.j-btn-bracket .j-btn-bot-line {
+  position: absolute; left: 7px; right: 7px;
+  height: 1px;
+  background: color-mix(in srgb, var(--j-accent) 25%, transparent);
+}
+.j-btn-bracket .j-btn-top-line { top: 0; }
+.j-btn-bracket .j-btn-bot-line { bottom: 0; }
+
+/* ── Hexagonal ──────────────────────────────────────────────── */
+.j-btn-hex {
+  clip-path: polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%);
+  aspect-ratio: 1.25 / 1;
+}
+.j-btn-hex .j-btn-bg-fill {
+  position: absolute; inset: 0;
+  background: var(--j-accent-dim);
+  clip-path: polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%);
+  border: 1px solid var(--j-border);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite;
+}
+
+/* ── Icon Square ────────────────────────────────────────────── */
+.j-btn-icon-sq {
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+  aspect-ratio: 1;
+}
+.j-btn-icon-sq .j-btn-bg-fill {
+  position: absolute; inset: 0;
+  background: var(--j-accent-dim);
+  border: 1px solid var(--j-border);
+}
+
+/* ── Scan (full-width) ──────────────────────────────────────── */
+.j-btn-scan-full {
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  overflow: hidden;
+}
+.j-btn-scan-full .j-btn-bg-fill {
+  position: absolute; inset: 0;
+  background: var(--j-accent);
+}
+.j-btn-scan-full .j-btn-label {
+  color: var(--j-bg);
+}
+
+
+/* ================================================================
+   11. HUD UTILITY COMPONENTS
+================================================================ */
+
+/* — Marching dot sequence — */
+.j-dot-seq {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.j-dot-seq .j-d {
+  width: 4px; height: 4px;
+  background: var(--j-accent);
+  animation: j-dot-march 1.4s ease-in-out infinite;
+}
+.j-dot-seq .j-d.sq   { width: 6px; border-radius: 0; }
+.j-dot-seq .j-d.tall { width: 3px; height: 9px; border-radius: 0; }
+
+/* — Waveform bars — */
+.j-waveform {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  height: 32px;
+}
+.j-waveform .j-wv {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--j-accent);
+  animation: j-wave var(--j-wv-dur, 0.6s) ease-in-out infinite var(--j-wv-dly, 0s);
+  min-height: 3px;
+  transform-origin: bottom;
+}
+
+/* — Tick-segment bar — */
+.j-tick-row {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+}
+.j-tick-row .j-tk {
+  width: 3px;
+  border-radius: 0;
+  background: var(--j-accent);
+  clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 85%);
+}
+.j-tick-row .j-tk.off {
+  background: color-mix(in srgb, var(--j-accent) 18%, var(--j-bg));
+}
+
+/* — Data bar row — */
+.j-data-row {
+  display: flex; align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--j-border-dim);
+}
+.j-data-key {
+  font-size: 9px; color: var(--j-text-muted);
+  letter-spacing: var(--j-letter-xs);
+  text-transform: uppercase;
+  flex: 1;
+}
+.j-data-bar {
+  flex: 1; height: 2px;
+  background: var(--j-accent-08);
+  margin: 0 8px;
+}
+.j-data-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--j-cyan-deep), var(--j-accent));
+  animation: j-bar-grow 2s ease-out forwards;
+}
+.j-data-val {
+  font-size: 11px; color: var(--j-accent);
+  font-weight: 600; min-width: 36px; text-align: right;
+}
+
+/* — Status diamond dot — */
+.j-status-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background: var(--j-accent);
+  animation: j-pulse 1.5s ease-in-out infinite;
+}
+
+/* — HUD border frame (full-screen container) — */
+.j-hud-frame {
+  position: relative;
+}
+.j-hud-frame .j-hf-corner {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--j-accent);
+  border-style: solid;
+  animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite;
+}
+.j-hud-frame .j-hf-corner.tl { top: 0; left: 0;  border-width: 2px 0 0 2px; animation-delay: 0.0s; }
+.j-hud-frame .j-hf-corner.tr { top: 0; right: 0; border-width: 2px 2px 0 0; animation-delay: 0.4s; }
+.j-hud-frame .j-hf-corner.bl { bottom: 0; left: 0;  border-width: 0 0 2px 2px; animation-delay: 0.8s; }
+.j-hud-frame .j-hf-corner.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; animation-delay: 1.2s; }
+
+/* — Top HUD bar — */
+.j-hud-bar-top {
+  position: relative;
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--j-accent);
+  border-bottom: 1px solid var(--j-border-dim);
+  background: linear-gradient(180deg, var(--j-accent-dim) 0%, transparent 100%);
+}
+.j-hud-bar-top::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 14px; height: 14px;
+  border-top: 2px solid var(--j-accent);
+  border-left: 2px solid var(--j-accent);
+  animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite;
+}
+.j-hud-bar-top::after {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 14px; height: 14px;
+  border-top: 2px solid var(--j-accent);
+  border-right: 2px solid var(--j-accent);
+  animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 0.4s;
+}
+
+/* — Bottom HUD bar — */
+.j-hud-bar-bot {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--j-accent);
+  background: linear-gradient(0deg, var(--j-accent-dim) 0%, transparent 100%);
+}
+.j-hud-bar-bot::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0;
+  width: 14px; height: 14px;
+  border-bottom: 2px solid var(--j-accent);
+  border-left: 2px solid var(--j-accent);
+  animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 0.8s;
+}
+.j-hud-bar-bot::after {
+  content: '';
+  position: absolute; bottom: 0; right: 0;
+  width: 14px; height: 14px;
+  border-bottom: 2px solid var(--j-accent);
+  border-right: 2px solid var(--j-accent);
+  animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 1.2s;
+}
+
+/* — Blinking label — */
+.j-blink      { animation: j-blink var(--j-dur-blink) step-end infinite; }
+.j-blink-slow { animation: j-blink-slow var(--j-dur-blink) ease-in-out infinite; }
+
+/* — Glitch text — */
+.j-glitch { animation: j-glitch 6s ease-in-out infinite; }
+
+
+/* ================================================================
+   12. TYPOGRAPHY UTILITIES
+================================================================ */
+.j-text-xs  { font-size: 9px;  letter-spacing: var(--j-letter-xs); text-transform: uppercase; color: color-mix(in srgb, var(--j-accent) 65%, transparent); }
+.j-text-sm  { font-size: 11px; letter-spacing: var(--j-letter-sm); }
+.j-text-val { font-size: 22px; font-weight: 600; color: var(--j-text-primary); line-height: 1.1; }
+.j-text-sub { font-size: 9px;  color: var(--j-text-muted); margin-top: 3px; letter-spacing: 0.06em; }
+.j-text-dim { color: var(--j-text-muted); }
+.j-text-ok  { color: var(--j-green) !important; }
+.j-text-warn{ color: var(--j-amber) !important; }
+.j-text-err { color: var(--j-red)   !important; }
+
+
+/* ================================================================
+   13. REDUCED MOTION
+================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ================================================================
+   JHUDFRAMECARD — 4 angular HUD frame styles
+   Inspired by LINKS Mark II / JARVIS cinematic UI frames
+================================================================ */
+
+/* ── Base ── */
+.j-hfc {
+  position: relative;
+  background: var(--j-bg-card);
+  overflow: hidden;
+  font-family: var(--j-font);
+  box-sizing: border-box;
+}
+
+/* ── Body ── */
+.j-hfc-body {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Shared scan lines ── */
+.j-hfc-scan-h {
+  position: absolute; left: 0; right: 0; height: 1px; top: -1px; z-index: 3;
+  background: linear-gradient(90deg, transparent, var(--j-accent-70), transparent);
+  animation: j-scan-v var(--j-dur-scan) ease-in-out infinite;
+  pointer-events: none;
+}
+.j-hfc-scan-v {
+  position: absolute; top: 0; bottom: 0; width: 1px; left: -1px; z-index: 3;
+  background: linear-gradient(180deg, transparent, var(--j-accent-70), transparent);
+  animation: j-scan-h calc(var(--j-dur-scan) * 1.3) ease-in-out infinite 1s;
+  pointer-events: none;
+}
+
+/* ── Title label ── */
+.j-hfc-title {
+  position: absolute; top: 8px; left: 36px; z-index: 4;
+  font-size: 9px; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--j-accent);
+  display: flex; align-items: center; gap: 5px;
+  text-shadow: 0 0 8px var(--j-accent-50);
+}
+.j-hfc-dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--j-accent); border-radius: 50%;
+  box-shadow: 0 0 6px var(--j-accent);
+  animation: j-pulse 1.5s ease-in-out infinite;
+}
+.j-hfc-id {
+  position: absolute; bottom: 8px; right: 14px; z-index: 4;
+  font-size: 8px; color: var(--j-accent-35); letter-spacing: .14em;
+}
+
+/* ================================================================
+   ALPHA — full corner circuit brackets (Image-1 top-left style)
+================================================================ */
+.j-hfc-alpha {
+  border: 1px solid var(--j-border-dim);
+  box-shadow: inset 0 0 40px var(--j-accent-05);
+}
+
+.j-hfc-corner       { position: absolute; width: 28px; height: 28px; pointer-events: none; }
+.j-hfc-tl           { top: 0; left: 0; }
+.j-hfc-tr           { top: 0; right: 0; }
+.j-hfc-bl           { bottom: 0; left: 0; }
+.j-hfc-br           { bottom: 0; right: 0; }
+
+/* Outer L-bracket */
+.j-hfc-corner-outer {
+  position: absolute; inset: 0;
+  border-color: var(--j-accent); border-style: solid;
+  filter: drop-shadow(0 0 3px var(--j-accent));
+}
+.j-hfc-tl .j-hfc-corner-outer { border-width: 2px 0 0 2px; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 0.0s; }
+.j-hfc-tr .j-hfc-corner-outer { border-width: 2px 2px 0 0; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 0.5s; }
+.j-hfc-bl .j-hfc-corner-outer { border-width: 0 0 2px 2px; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 1.0s; }
+.j-hfc-br .j-hfc-corner-outer { border-width: 0 2px 2px 0; animation: j-corner-blink var(--j-dur-corner) ease-in-out infinite 1.5s; }
+
+/* Inner pip bracket */
+.j-hfc-corner-inner {
+  position: absolute; width: 8px; height: 8px;
+  border-color: var(--j-accent-50); border-style: solid;
+}
+.j-hfc-tl .j-hfc-corner-inner { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+.j-hfc-tr .j-hfc-corner-inner { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+.j-hfc-bl .j-hfc-corner-inner { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+.j-hfc-br .j-hfc-corner-inner { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+/* Circuit ticks */
+.j-hfc-tick-h {
+  position: absolute; height: 1px; width: 14px;
+  background: var(--j-accent-35);
+}
+.j-hfc-tick-v {
+  position: absolute; width: 1px; height: 14px;
+  background: var(--j-accent-35);
+}
+.j-hfc-tl .j-hfc-tick-h { top: 4px; left: 28px; }
+.j-hfc-tl .j-hfc-tick-v { left: 4px; top: 28px; }
+.j-hfc-br .j-hfc-tick-h { bottom: 4px; right: 28px; }
+.j-hfc-br .j-hfc-tick-v { right: 4px; bottom: 28px; }
+
+/* Corner circle accent */
+.j-hfc-circ {
+  position: absolute; width: 8px; height: 8px;
+  border-radius: 50%; border: 1px solid var(--j-accent);
+  background: var(--j-accent-12);
+  box-shadow: 0 0 6px var(--j-accent-35);
+  animation: j-pulse 2s ease-in-out infinite;
+}
+.j-hfc-tr .j-hfc-circ { top: 6px; right: 6px; }
+.j-hfc-bl .j-hfc-circ { bottom: 6px; left: 6px; }
+
+/* ================================================================
+   BETA — top/bottom rails + notched corners
+================================================================ */
+.j-hfc-beta {
+  clip-path: polygon(20px 0%,100% 0%,100% calc(100% - 20px),calc(100% - 20px) 100%,0% 100%,0% 20px);
+  border: 1px solid var(--j-border);
+  animation: j-s2-glow var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-hfc-beta-rail-t {
+  position: absolute; top: 0; left: 20px; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--j-accent), transparent 60%);
+}
+.j-hfc-beta-rail-b {
+  position: absolute; bottom: 0; left: 0; right: 20px; height: 2px;
+  background: linear-gradient(90deg, transparent 40%, var(--j-accent));
+}
+.j-hfc-beta-notch-tl {
+  position: absolute; top: 0; left: 0;
+  border: 20px solid transparent;
+  border-top-color: var(--j-accent); border-left-color: var(--j-accent);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite;
+}
+.j-hfc-beta-notch-br {
+  position: absolute; bottom: 0; right: 0;
+  border: 20px solid transparent;
+  border-bottom-color: var(--j-accent); border-right-color: var(--j-accent);
+  animation: j-pulse var(--j-dur-pulse) ease-in-out infinite .6s;
+}
+.j-hfc-beta-pip-l {
+  position: absolute; top: 50%; left: 0;
+  transform: translateY(-50%);
+  width: 4px; height: 24px;
+  background: linear-gradient(180deg, transparent, var(--j-accent), transparent);
+  box-shadow: 0 0 6px var(--j-accent);
+}
+.j-hfc-beta-pip-r {
+  position: absolute; top: 50%; right: 0;
+  transform: translateY(-50%);
+  width: 4px; height: 24px;
+  background: linear-gradient(180deg, transparent, var(--j-accent-50), transparent);
+}
+
+/* ================================================================
+   GAMMA — segmented corner arcs with center ring
+================================================================ */
+.j-hfc-gamma {
+  border: 1px solid var(--j-border-dim);
+}
+.j-hfc-g-seg-tl1,.j-hfc-g-seg-tl2,
+.j-hfc-g-seg-tr1,.j-hfc-g-seg-tr2,
+.j-hfc-g-seg-bl1,.j-hfc-g-seg-bl2,
+.j-hfc-g-seg-br1,.j-hfc-g-seg-br2 {
+  position: absolute; pointer-events: none;
+  border-color: var(--j-accent); border-style: solid;
+}
+/* TL corner segs */
+.j-hfc-g-seg-tl1 { top:0;left:0; width:32px;height:2px; border-width:2px 0 0 0; animation:j-pulse 2.5s ease-in-out infinite 0.0s; }
+.j-hfc-g-seg-tl2 { top:0;left:0; width:2px;height:32px; border-width:0 0 0 2px; animation:j-pulse 2.5s ease-in-out infinite 0.2s; }
+/* TR corner segs */
+.j-hfc-g-seg-tr1 { top:0;right:0; width:32px;height:2px; border-width:2px 0 0 0; animation:j-pulse 2.5s ease-in-out infinite 0.5s; }
+.j-hfc-g-seg-tr2 { top:0;right:0; width:2px;height:32px; border-width:0 2px 0 0; animation:j-pulse 2.5s ease-in-out infinite 0.7s; }
+/* BL corner segs */
+.j-hfc-g-seg-bl1 { bottom:0;left:0; width:32px;height:2px; border-width:0 0 2px 0; animation:j-pulse 2.5s ease-in-out infinite 1.0s; }
+.j-hfc-g-seg-bl2 { bottom:0;left:0; width:2px;height:32px; border-width:0 0 0 2px; animation:j-pulse 2.5s ease-in-out infinite 1.2s; }
+/* BR corner segs */
+.j-hfc-g-seg-br1 { bottom:0;right:0; width:32px;height:2px; border-width:0 0 2px 0; animation:j-pulse 2.5s ease-in-out infinite 1.5s; }
+.j-hfc-g-seg-br2 { bottom:0;right:0; width:2px;height:32px; border-width:0 2px 0 0; animation:j-pulse 2.5s ease-in-out infinite 1.7s; }
+/* Center ring */
+.j-hfc-g-center-ring {
+  position: absolute; inset: 0; margin: auto;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--j-accent-25);
+  animation: j-spin var(--j-dur-spin) linear infinite;
+}
+.j-hfc-g-center-ring::after {
+  content: ''; position: absolute; inset: 4px; border-radius: 50%;
+  background: var(--j-accent-08); border: 1px solid var(--j-accent-12);
+}
+
+/* ================================================================
+   DELTA — heavy industrial bars + corner blocks
+================================================================ */
+.j-hfc-delta {
+  background: var(--j-bg-card);
+}
+.j-hfc-d-top-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent 5%, var(--j-accent-70) 15%, var(--j-accent) 50%, var(--j-accent-70) 85%, transparent 95%);
+  box-shadow: 0 0 10px var(--j-accent-35);
+}
+.j-hfc-d-bot-bar {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent 5%, var(--j-accent-50) 15%, var(--j-accent-70) 50%, var(--j-accent-50) 85%, transparent 95%);
+}
+.j-hfc-d-l-rail {
+  position: absolute; top: 10px; left: 0; bottom: 10px; width: 2px;
+  background: linear-gradient(180deg, transparent, var(--j-accent-70), var(--j-accent-35), transparent);
+}
+.j-hfc-d-r-rail {
+  position: absolute; top: 10px; right: 0; bottom: 10px; width: 2px;
+  background: linear-gradient(180deg, transparent, var(--j-accent-35), transparent);
+}
+.j-hfc-d-tl-block,.j-hfc-d-tr-block,.j-hfc-d-bl-block,.j-hfc-d-br-block {
+  position: absolute; width: 18px; height: 14px;
+  background: var(--j-accent-18); border: 1px solid var(--j-accent);
+  clip-path: polygon(4px 0,100% 0,100% 100%,0 100%,0 4px);
+}
+.j-hfc-d-tl-block { top:0; left:0; }
+.j-hfc-d-tr-block { top:0; right:0; transform:scaleX(-1); }
+.j-hfc-d-bl-block { bottom:0; left:0; transform:scaleY(-1); }
+.j-hfc-d-br-block { bottom:0; right:0; transform:scale(-1); }
+/* Hash tick strips */
+.j-hfc-d-hash-t,.j-hfc-d-hash-b {
+  position: absolute; left: 24px; right: 24px; height: 6px;
+  display: flex; gap: 3px; align-items: center;
+}
+.j-hfc-d-hash-t { top: 4px; }
+.j-hfc-d-hash-b { bottom: 4px; }
+.j-hfc-d-hash-t::before,.j-hfc-d-hash-t::after,
+.j-hfc-d-hash-b::before,.j-hfc-d-hash-b::after {
+  content: '';
+  display: block; height: 6px; flex: 1; max-width: 12px;
+  background: repeating-linear-gradient(90deg, var(--j-accent-35) 0, var(--j-accent-35) 2px, transparent 2px, transparent 5px);
+}
+
+
+/* ================================================================
+   JHUDLABEL — Sci-fi callout display labels (Image-2 style)
+================================================================ */
+
+.j-hl {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--j-font);
+  position: relative;
+}
+
+/* ── CHIP — parallelogram tag ── */
+.j-hl-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  transform: skewX(-10deg);
+  background: var(--j-accent-08);
+  border: 1px solid var(--j-accent-35);
+  border-left: 2px solid var(--j-accent);
+  padding: 4px 10px 4px 8px;
+  clip-path: polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
+  position: relative; overflow: hidden;
+}
+.j-hl-chip::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--j-accent-05), transparent);
+  pointer-events: none;
+}
+.j-hl-pip {
+  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--j-accent); box-shadow: 0 0 5px var(--j-accent);
+  animation: j-pulse 1.8s ease-in-out infinite;
+  transform: skewX(10deg);
+}
+.j-hl-text {
+  font-size: 10px; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--j-accent);
+  transform: skewX(10deg);
+}
+.j-hl-val {
+  font-size: 10px; font-weight: 700; color: var(--j-text-primary);
+  letter-spacing: .08em; transform: skewX(10deg);
+  border-left: 1px solid var(--j-accent-35); padding-left: 6px;
+}
+/* Connecting line from chip */
+.j-hl-line-h {
+  display: inline-block; width: 32px; height: 1px;
+  background: linear-gradient(90deg, var(--j-accent-50), transparent);
+  align-self: center;
+}
+
+/* ── CALLOUT — two-line lower-third ── */
+.j-hl-callout {
+  display: flex; align-items: center; gap: 0;
+}
+.j-hl-callout-inner {
+  background: var(--j-bg-card);
+  border: 1px solid var(--j-accent-35);
+  border-left: 3px solid var(--j-accent);
+  padding: 4px 10px;
+  clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);
+  min-width: 100px;
+}
+.j-hl-sub {
+  font-size: 7px; color: var(--j-text-muted); letter-spacing: .18em;
+  text-transform: uppercase; margin-bottom: 1px;
+}
+.j-hl-main {
+  font-size: 11px; font-weight: 700; color: var(--j-accent);
+  letter-spacing: .12em; text-transform: uppercase;
+  text-shadow: 0 0 8px var(--j-accent-35);
+}
+.j-hl-callout-line {
+  display: flex; align-items: center;
+}
+.j-hl-line-seg {
+  width: 24px; height: 1px;
+  background: var(--j-accent-50);
+}
+.j-hl-line-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--j-accent); box-shadow: 0 0 6px var(--j-accent);
+  animation: j-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── CIRCUIT — bracket label with arm ── */
+.j-hl-circuit {
+  display: flex; align-items: center; gap: 0;
+}
+.j-hl-cir-bracket {
+  position: relative;
+  padding: 4px 10px;
+  background: var(--j-accent-05);
+}
+.j-hl-cir-bracket::before,.j-hl-cir-bracket::after {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  width: 6px; border-color: var(--j-accent); border-style: solid;
+}
+.j-hl-cir-bracket::before { left: 0;  border-width: 1px 0 1px 2px; }
+.j-hl-cir-bracket::after  { right: 0; border-width: 1px 2px 1px 0; }
+.j-hl-cir-label {
+  font-size: 9px; font-weight: 700; color: var(--j-accent);
+  letter-spacing: .16em; text-transform: uppercase;
+}
+.j-hl-cir-val {
+  font-size: 8px; color: var(--j-text-muted); letter-spacing: .08em; margin-top: 1px;
+}
+.j-hl-cir-arm {
+  display: flex; align-items: center;
+}
+.j-hl-cir-node {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: transparent; border: 1px solid var(--j-accent);
+  flex-shrink: 0;
+}
+.j-hl-cir-node-end {
+  background: var(--j-accent); box-shadow: 0 0 5px var(--j-accent);
+  animation: j-pulse 2s ease-in-out infinite;
+}
+.j-hl-cir-track {
+  height: 1px; width: 28px;
+  background: repeating-linear-gradient(90deg, var(--j-accent-50) 0, var(--j-accent-50) 3px, transparent 3px, transparent 6px);
+}
+
+/* ── BADGE — radial circle callout ── */
+.j-hl-badge {
+  display: flex; align-items: center; gap: 8px;
+}
+.j-hl-badge-ring {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid var(--j-accent);
+  background: var(--j-accent-08);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 10px var(--j-accent-25), inset 0 0 10px var(--j-accent-05);
+  animation: j-radar-glow var(--j-dur-pulse) ease-in-out infinite;
+  flex-shrink: 0;
+}
+.j-hl-badge-val {
+  font-size: 11px; font-weight: 700; color: var(--j-accent);
+  letter-spacing: .04em;
+}
+.j-hl-badge-label {
+  font-size: 10px; font-weight: 700; color: var(--j-text-primary);
+  letter-spacing: .14em; text-transform: uppercase;
+}
+
+/* ── PANEL — bordered info panel with scan ── */
+.j-hl-panel {
+  position: relative; overflow: hidden;
+  background: var(--j-bg-card);
+  border: 1px solid var(--j-accent-35);
+  clip-path: polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+  padding: 6px 12px;
+  min-width: 120px;
+}
+.j-hl-panel-top {
+  height: 2px;
+  background: linear-gradient(90deg, var(--j-accent), transparent);
+  margin-bottom: 4px;
+}
+.j-hl-panel-sub {
+  font-size: 7px; color: var(--j-text-muted); letter-spacing: .18em;
+  text-transform: uppercase; display: block; margin-bottom: 1px;
+}
+.j-hl-panel-body {
+  display: flex; align-items: baseline; gap: 6px;
+}
+.j-hl-panel-main {
+  font-size: 12px; font-weight: 700; color: var(--j-accent);
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.j-hl-panel-val {
+  font-size: 9px; color: var(--j-text-secondary); letter-spacing: .06em;
+}
+.j-hl-panel-scan {
+  position: absolute; left: 0; right: 0; height: 1px; top: -1px;
+  background: linear-gradient(90deg, transparent, var(--j-accent-70), transparent);
+  animation: j-scan-v var(--j-dur-scan) ease-in-out infinite;
+  pointer-events: none;
+}
+

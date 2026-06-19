@@ -1,0 +1,223 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   jarvis-charts.css — JarvisUI Chart Component Styles
+   Zero hardcoded colors · reads CSS custom properties · reacts to theme switch
+   Link in App.razor <head> after jarvis-ui.css:
+     <link rel="stylesheet" href="_content/JarvisUI/css/jarvis-charts.css" />
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Shared wrapper ──────────────────────────────────────────────────────── */
+.j-chart-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--j-bg-card);
+    border: 1px solid var(--j-accent-15, rgba(0,229,255,.15));
+}
+
+.j-chart-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ── Scanline overlay (decorative) ───────────────────────────────────────── */
+.j-chart-scan {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        var(--j-accent-03, rgba(0,229,255,.03)) 2px,
+        var(--j-accent-03, rgba(0,229,255,.03)) 4px
+    );
+}
+
+/* ── Grid lines ──────────────────────────────────────────────────────────── */
+.j-chart-grid {
+    stroke: var(--j-accent-10, rgba(0,229,255,.10));
+    stroke-width: 0.5;
+    stroke-dasharray: 3 3;
+}
+
+/* ── Axis labels ─────────────────────────────────────────────────────────── */
+.j-chart-axis-label {
+    fill: var(--j-text-primary);
+    opacity: 0.45;
+    font-size: 8px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.j-chart-value-label {
+    fill: var(--j-accent);
+    font-size: 8px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+}
+
+/* ── Line chart ──────────────────────────────────────────────────────────── */
+.j-chart-line {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 3px currentColor);
+}
+
+.j-chart-area {
+    opacity: 0.12;
+    transition: opacity .3s ease;
+}
+.j-chart-wrap:hover .j-chart-area { opacity: 0.22; }
+
+.j-chart-dot {
+    filter: drop-shadow(0 0 4px currentColor);
+    transition: r .2s ease;
+}
+
+/* ── Bar chart ───────────────────────────────────────────────────────────── */
+.j-chart-bar {
+    opacity: 0.55;
+    transition: opacity .25s ease;
+}
+.j-chart-bar-group:hover .j-chart-bar { opacity: 0.85; }
+
+.j-chart-bar-glow {
+    opacity: 0;
+    filter: blur(6px);
+    transition: opacity .25s ease;
+}
+.j-chart-bar-group:hover .j-chart-bar-glow { opacity: 0.28; }
+
+/* ── Donut chart ─────────────────────────────────────────────────────────── */
+.j-chart-donut-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.j-chart-donut-seg {
+    transition: filter .25s ease;
+    cursor: pointer;
+}
+.j-chart-donut-seg:hover { filter: drop-shadow(0 0 7px currentColor); }
+
+.j-chart-donut-center-val {
+    fill: var(--j-accent);
+    font-size: 18px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.j-chart-donut-center-lbl {
+    fill: var(--j-text-primary);
+    opacity: 0.5;
+    font-size: 7px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.j-chart-donut-legend {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 4px;
+}
+
+.j-chart-donut-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--j-text-primary);
+    opacity: 0.75;
+}
+
+.j-chart-donut-legend-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.j-chart-donut-legend-label { flex: 1; }
+
+.j-chart-donut-legend-pct {
+    color: var(--j-accent);
+    font-weight: bold;
+}
+
+/* ── Sparkline ───────────────────────────────────────────────────────────── */
+.j-sparkline-wrap { vertical-align: middle; }
+
+.j-sparkline-line {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.j-sparkline-area { opacity: 0.15; }
+
+.j-sparkline-dot { filter: drop-shadow(0 0 3px currentColor); }
+
+.j-sparkline-trend {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* ── Radar chart ─────────────────────────────────────────────────────────── */
+.j-chart-radar-web {
+    fill: none;
+    stroke: var(--j-accent-10, rgba(0,229,255,.10));
+    stroke-width: 0.5;
+}
+
+.j-chart-radar-spoke {
+    stroke: var(--j-accent-08, rgba(0,229,255,.08));
+    stroke-width: 0.5;
+}
+
+.j-chart-radar-data {
+    fill-opacity: 0.15;
+    stroke-width: 1.5;
+    transition: fill-opacity .3s ease;
+}
+
+/* ── Gauge chart ─────────────────────────────────────────────────────────── */
+.j-chart-gauge-arc {
+    filter: drop-shadow(0 0 4px currentColor);
+}
+
+.j-chart-gauge-tick {
+    stroke: var(--j-accent-20, rgba(0,229,255,.20));
+    stroke-width: 1;
+}
+
+.j-chart-gauge-needle { filter: drop-shadow(0 0 3px currentColor); }
+
+.j-chart-gauge-hub { filter: drop-shadow(0 0 5px currentColor); }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .j-chart-axis-label { font-size: 6px; }
+    .j-chart-donut-legend-row { font-size: 7px; }
+}
