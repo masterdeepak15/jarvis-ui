@@ -5,4 +5,18 @@ export { JarvisTokens } from './theme/JarvisTokens';
 export { JThemeProvider, useTheme } from './theme/JThemeContext';
 export type { ThemeContextValue } from './theme/JThemeContext';
 export { JThemePicker } from './components/theme/JThemePicker';
+export type { JHudBarPosition, JHudBarProps } from './components/layout/JHudBar';
+export { JHudBar } from './components/layout/JHudBar';
+export type { JSpinnerProps } from './components/layout/JSpinner';
+export { JSpinner } from './components/layout/JSpinner';
+export type { JNavItemProps } from './components/layout/JNavItem';
+export { JNavItem } from './components/layout/JNavItem';
+export type { JSidebarProps } from './components/layout/JSidebar';
+export { JSidebar } from './components/layout/JSidebar';
+export type { JPageLayoutProps } from './components/layout/JPageLayout';
+export { JPageLayout } from './components/layout/JPageLayout';
+export type { JHudFrameProps } from './components/layout/JHudFrame';
+export { JHudFrame } from './components/layout/JHudFrame';
+export type { JFrameStyle, JHudFrameCardProps } from './components/layout/JHudFrameCard';
+export { JHudFrameCard } from './components/layout/JHudFrameCard';
 //# sourceMappingURL=index.d.ts.map
