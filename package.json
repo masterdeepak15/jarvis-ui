@@ -1,0 +1,11 @@
+{
+  "name": "jarvis-ui-monorepo",
+  "private": true,
+  "scripts": {
+    "dev:lib": "pnpm --filter jarvis-ui dev",
+    "dev:docs": "pnpm --filter docs dev",
+    "build:lib": "pnpm --filter jarvis-ui build",
+    "build:docs": "pnpm --filter docs build",
+    "test": "pnpm --filter jarvis-ui test"
+  }
+}
