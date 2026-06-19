@@ -15,7 +15,7 @@ export default function App() {
       minHeight: '100vh',
       background: 'var(--j-bg)',
       color: 'var(--j-text-primary)',
-      fontFamily: "'Courier New', 'Lucida Console', monospace",
+      fontFamily: "'Courier New', monospace",
       padding: 32,
     }}>
       <div style={{ fontSize: 22, color: 'var(--j-accent)', letterSpacing: '0.16em', marginBottom: 4 }}>

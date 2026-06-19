@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTheme } from '../../theme/JThemeContext'
+import { PRESETS } from '../../theme/JarvisTheme'
 import type { JThemePreset } from '../../theme/JarvisTheme'
 
 interface JThemePickerProps {
@@ -12,12 +13,13 @@ const PRESET_SWATCHES: Array<{ preset: JThemePreset; color: string; label: strin
   { preset: 'amber',  color: 'var(--j-warn)',         label: 'Amber'  },
   { preset: 'green',  color: 'var(--j-ok)',           label: 'Green'  },
   { preset: 'red',    color: 'var(--j-err)',          label: 'Red'    },
-  { preset: 'purple', color: '#a855f7',               label: 'Purple' },
+  { preset: 'purple', color: PRESETS['purple'].accent, label: 'Purple' },
   { preset: 'white',  color: 'var(--j-accent-deep)',  label: 'White'  },
 ]
 
 export function JThemePicker({ compact = false, showCustom = true }: JThemePickerProps) {
   const { theme, setPreset, setTheme } = useTheme()
+  const [isCustom,     setIsCustom]    = useState(false)
   const [customAccent, setCustomAccent] = useState(theme.accent)
   const [customBg,     setCustomBg]     = useState(theme.bg)
   const [customCard,   setCustomCard]   = useState(theme.bgCard)
@@ -42,6 +44,7 @@ export function JThemePicker({ compact = false, showCustom = true }: JThemePicke
   }
 
   function applyCustom() {
+    setIsCustom(true)
     setTheme({
       ...theme,
       name:      'Custom',
@@ -71,12 +74,13 @@ export function JThemePicker({ compact = false, showCustom = true }: JThemePicke
 
       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
         {PRESET_SWATCHES.map(({ preset, color, label }) => {
-          const active = theme.preset === preset
+          const active = !isCustom && theme.preset === preset
           return (
             <button
               key={preset}
               title={label}
-              onClick={() => setPreset(preset)}
+              aria-pressed={active}
+              onClick={() => { setIsCustom(false); setPreset(preset) }}
               style={swatchStyle(color, active)}
             >
               {!compact && (

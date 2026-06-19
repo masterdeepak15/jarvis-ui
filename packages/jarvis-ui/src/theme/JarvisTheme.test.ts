@@ -124,4 +124,12 @@ describe('toCss', () => {
     // amber accent #f97316 → rgb(249,115,22)
     expect(css).toContain('rgba(249,115,22, 0.05)')
   })
+
+  it('formats --j-bg-overlay with no space before alpha (rgba(r,g,b,0.92))', () => {
+    const css = toCss(PRESETS.cyan)
+    // cyan bg is #020d18 → r=2,g=13,b=24
+    expect(css).toContain('rgba(2,13,24,0.92)')
+    // must NOT have a space before 0.92
+    expect(css).not.toContain('rgba(2,13,24, 0.92)')
+  })
 })

@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { JarvisTheme, JThemePreset, PRESETS, toCss } from './JarvisTheme'
 
-interface ThemeContextValue {
+export interface ThemeContextValue {
   theme: JarvisTheme
   setTheme: (theme: JarvisTheme) => void
   setPreset: (preset: JThemePreset) => void
