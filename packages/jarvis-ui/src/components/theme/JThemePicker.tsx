@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTheme } from '../../theme/JThemeContext'
-import { PRESETS, JThemePreset } from '../../theme/JarvisTheme'
+import type { JThemePreset } from '../../theme/JarvisTheme'
 
 interface JThemePickerProps {
   compact?: boolean
