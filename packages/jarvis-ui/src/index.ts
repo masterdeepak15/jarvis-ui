@@ -34,3 +34,5 @@ export { JHudFrameCard } from './components/layout/JHudFrameCard'
 // Components — ui
 export type { JButtonProps } from './components/ui/JButton'
 export { JButton } from './components/ui/JButton'
+export type { JCardProps } from './components/ui/JCard'
+export { JCard } from './components/ui/JCard'
