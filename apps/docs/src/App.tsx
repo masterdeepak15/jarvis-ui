@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { PageMap } from './PageMap'
 import { PageIndiaMap } from './PageIndiaMap'
+import { PageDataTable } from './PageDataTable'
+import { PageForms } from './PageForms'
+import { PageComponents } from './PageComponents'
 import {
   JThemeProvider, JThemePicker, useTheme,
   JPageLayout, JNavItem,
@@ -136,6 +139,54 @@ const SVC_EDGES: EdgeDef[] = [
   { from: 'api', to: 'queue',style: 'dashed' },
   { from: 'queue',to: 'worker', color: 'red', animDur: 1.0 },
   { from: 'auth', to: 'cache', color: 'green', style: 'dashed' },
+]
+
+// ── Graph 5: NH-90 ITS device flow ────────────────────────────────────────────
+const ITS_NODES: NodeDef[] = [
+  { id: 'c0',   label: 'CCTV-000', x: 40,  y: 40,  pulse: true },
+  { id: 'c1',   label: 'CCTV-001', x: 40,  y: 110 },
+  { id: 'c2',   label: 'CCTV-002', x: 40,  y: 180, color: 'amber', pulse: true },
+  { id: 'c3',   label: 'CCTV-003', x: 40,  y: 250 },
+  { id: 'v1',   label: 'VMS-001',  x: 40,  y: 320, color: 'amber' },
+  { id: 'p1',   label: 'PTZ-001',  x: 40,  y: 380, color: 'green' },
+  { id: 'hub',  label: 'NH-90',    x: 300, y: 210, type: 'hub' },
+  { id: 'toll', label: 'ECB TOLL', x: 520, y: 110, type: 'hex', color: 'red' },
+  { id: 'ctrl', label: 'CTRL ROOM',x: 520, y: 310, type: 'hub', color: 'amber' },
+]
+const ITS_EDGES: EdgeDef[] = [
+  { from: 'c0', to: 'hub', animDur: 1.8 },
+  { from: 'c1', to: 'hub', animDur: 2.2 },
+  { from: 'c2', to: 'hub', color: 'amber', animDur: 1.5 },
+  { from: 'c3', to: 'hub', animDur: 2.5 },
+  { from: 'v1', to: 'hub', color: 'amber', style: 'dashed', animDur: 2.0 },
+  { from: 'p1', to: 'hub', color: 'green', animDur: 1.6 },
+  { from: 'hub', to: 'toll', color: 'red',   animDur: 1.2 },
+  { from: 'hub', to: 'ctrl', color: 'amber', animDur: 1.4 },
+]
+
+// ── Graph 6: alert propagation tree ───────────────────────────────────────────
+const ALERT_NODES: NodeDef[] = [
+  { id: 'root',  label: 'CCTV-005',  x: 40,  y: 160, color: 'red',   pulse: true },
+  { id: 'z3',    label: 'ZONE-3',    x: 200, y: 160, type: 'diamond', color: 'red' },
+  { id: 'vms',   label: 'VMS-001',   x: 40,  y: 80,  color: 'amber', pulse: true },
+  { id: 'z3v',   label: 'ZONE-3 VMS',x: 200, y: 80,  type: 'diamond', color: 'amber' },
+  { id: 'nhub',  label: 'NH-90 HUB', x: 370, y: 120, type: 'hub',    color: 'amber' },
+  { id: 'ops',   label: 'OPS CENTER',x: 530, y: 60,  color: 'red' },
+  { id: 'log',   label: 'LOG SRV',   x: 530, y: 180, color: 'amber' },
+  { id: 'ok1',   label: 'CCTV-006',  x: 40,  y: 280, color: 'green' },
+  { id: 'ok2',   label: 'PTZ-001',   x: 40,  y: 360, color: 'green' },
+  { id: 'okz',   label: 'ZONE-1',    x: 200, y: 320, type: 'diamond', color: 'green' },
+]
+const ALERT_EDGES: EdgeDef[] = [
+  { from: 'root', to: 'z3',   color: 'red',   animDur: 0.8 },
+  { from: 'vms',  to: 'z3v',  color: 'amber', style: 'dashed', animDur: 1.2 },
+  { from: 'z3',   to: 'nhub', color: 'red',   animDur: 0.9 },
+  { from: 'z3v',  to: 'nhub', color: 'amber', animDur: 1.1 },
+  { from: 'nhub', to: 'ops',  color: 'red',   animDur: 0.8 },
+  { from: 'nhub', to: 'log',  color: 'amber' },
+  { from: 'ok1',  to: 'okz',  color: 'green', animDur: 2.5 },
+  { from: 'ok2',  to: 'okz',  color: 'green', animDur: 3.0 },
+  { from: 'okz',  to: 'nhub', color: 'green', style: 'dashed', animDur: 3.0 },
 ]
 
 // ── Graph 4: data pipeline ───────────────────────────────────────────────────
@@ -422,21 +473,66 @@ function PageComms() {
 }
 
 function PageNetwork() {
-  const [graphTab, setGraphTab] = useState<'tactical'|'org'|'services'|'pipeline'>('tactical')
+  const [graphTab, setGraphTab] = useState<'tactical'|'org'|'services'|'pipeline'|'its'|'alert'|'live'>('tactical')
+  const [liveNodes, setLiveNodes] = useState<NodeDef[]>([
+    { id:'l1', label:'NODE-001', x:80,  y:80,  pulse:true },
+    { id:'l2', label:'NODE-002', x:80,  y:210 },
+    { id:'l3', label:'NODE-003', x:80,  y:330 },
+    { id:'lh', label:'HUB',     x:320, y:200, type:'hub' },
+    { id:'lo', label:'OUTPUT',  x:520, y:200, type:'hex', color:'green' },
+  ])
+  const [liveEdges, setLiveEdges] = useState<EdgeDef[]>([
+    { from:'l1', to:'lh' }, { from:'l2', to:'lh' }, { from:'l3', to:'lh' },
+    { from:'lh', to:'lo', color:'green', animDur:1.2 },
+  ])
+  const [liveCount, setLiveCount] = useState(5)
+
+  function addLiveNode(type: NodeDef['type'], color: NodeDef['color'], prefix: string) {
+    const id  = `ln${liveCount+1}`
+    const x   = type==='hub' ? 200+Math.floor(Math.random()*200) : 40+Math.floor(Math.random()*120)
+    const y   = 40+Math.floor(Math.random()*360)
+    setLiveNodes(p => [...p, { id, label:`${prefix}-${String(liveCount+1).padStart(3,'0')}`, x, y, type, color }])
+    setLiveCount(p => p+1)
+  }
+  function connectRandom() {
+    if (liveNodes.length < 2) return
+    const a = liveNodes[Math.floor(Math.random()*liveNodes.length)]
+    const b = liveNodes[Math.floor(Math.random()*liveNodes.length)]
+    if (a.id === b.id) return
+    const colors: NodeDef['color'][] = ['cyan','amber','green','red']
+    setLiveEdges(p => [...p, { from:a.id, to:b.id, color:colors[Math.floor(Math.random()*colors.length)], animDur:1+Math.random()*2 }])
+  }
+  function resetLive() {
+    setLiveCount(5)
+    setLiveNodes([
+      { id:'l1', label:'NODE-001', x:80,  y:80,  pulse:true },
+      { id:'l2', label:'NODE-002', x:80,  y:210 },
+      { id:'l3', label:'NODE-003', x:80,  y:330 },
+      { id:'lh', label:'HUB',     x:320, y:200, type:'hub' },
+      { id:'lo', label:'OUTPUT',  x:520, y:200, type:'hex', color:'green' },
+    ])
+    setLiveEdges([
+      { from:'l1', to:'lh' }, { from:'l2', to:'lh' }, { from:'l3', to:'lh' },
+      { from:'lh', to:'lo', color:'green', animDur:1.2 },
+    ])
+  }
   return (
     <Col gap={28}>
       {/* ── graph tab selector ──────────────────────────────────────────── */}
       <div>
         <SectionTitle>NODE RELATIONSHIP GRAPHS</SectionTitle>
-        <Row gap={6} wrap={false}>
+        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
           {([
-            { key: 'tactical', label: '◉ TACTICAL NETWORK' },
-            { key: 'org',      label: '⊞ ORG HIERARCHY' },
-            { key: 'services', label: '◈ MICROSERVICES' },
-            { key: 'pipeline', label: '▶ DATA PIPELINE' },
+            { key: 'tactical', label: '◉ TACTICAL'    },
+            { key: 'org',      label: '⊞ ORG TREE'   },
+            { key: 'services', label: '◈ MICROSERVICES'},
+            { key: 'pipeline', label: '▶ PIPELINE'    },
+            { key: 'its',      label: '◎ NH-90 ITS'  },
+            { key: 'alert',    label: '⚠ ALERT TREE' },
+            { key: 'live',     label: '⊕ INTERACTIVE' },
           ] as const).map(t => (
             <button key={t.key} onClick={() => setGraphTab(t.key)} style={{
-              padding: '5px 14px', fontFamily: "'Courier New',monospace", fontSize: 8,
+              padding: '5px 12px', fontFamily: "'Courier New',monospace", fontSize: 8,
               letterSpacing: '0.1em', cursor: 'pointer',
               background: graphTab === t.key ? 'var(--j-accent-18)' : 'var(--j-bg-card)',
               border: `1px solid ${graphTab === t.key ? 'var(--j-accent-50)' : 'var(--j-border-dim)'}`,
@@ -444,12 +540,26 @@ function PageNetwork() {
               clipPath: 'polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)',
             }}>{t.label}</button>
           ))}
-        </Row>
-        <div style={{ marginTop: 12 }}>
-          {graphTab === 'tactical'  && <JNodeGraph nodes={NODES}      edges={EDGES}      title="FIELD NETWORK MAP"           height="420px" showLegend />}
-          {graphTab === 'org'       && <JNodeGraph nodes={ORG_NODES}  edges={ORG_EDGES}  title="COMMAND STRUCTURE — ORG TREE" height="380px" showLegend />}
-          {graphTab === 'services'  && <JNodeGraph nodes={SVC_NODES}  edges={SVC_EDGES}  title="MICROSERVICES TOPOLOGY"       height="380px" showLegend />}
-          {graphTab === 'pipeline'  && <JNodeGraph nodes={PIPE_NODES} edges={PIPE_EDGES} title="INTEL DATA PIPELINE"          height="420px" showLegend />}
+        </div>
+        {graphTab === 'live' && (
+          <Row gap={8}>
+            <JButton color="cyan"  size="sm" onClick={() => addLiveNode('default', 'cyan',  'NODE')}>+ CHIP</JButton>
+            <JButton color="amber" size="sm" onClick={() => addLiveNode('hub',     'amber', 'HUB' )}>+ HUB</JButton>
+            <JButton color="green" size="sm" onClick={() => addLiveNode('hex',     'green', 'SRV' )}>+ HEX</JButton>
+            <JButton color="red"   size="sm" onClick={connectRandom}>⇄ CONNECT RANDOM</JButton>
+            <JButton color="ghost" size="sm" onClick={resetLive}>↺ RESET</JButton>
+            <JBadge color="cyan">{liveNodes.length} NODES</JBadge>
+            <JBadge color="amber">{liveEdges.length} EDGES</JBadge>
+          </Row>
+        )}
+        <div style={{ marginTop: 4 }}>
+          {graphTab === 'tactical'  && <JNodeGraph nodes={NODES}        edges={EDGES}        title="FIELD NETWORK MAP"            height="420px" showLegend />}
+          {graphTab === 'org'       && <JNodeGraph nodes={ORG_NODES}    edges={ORG_EDGES}    title="COMMAND STRUCTURE — ORG TREE"  height="380px" showLegend />}
+          {graphTab === 'services'  && <JNodeGraph nodes={SVC_NODES}    edges={SVC_EDGES}    title="MICROSERVICES TOPOLOGY"        height="380px" showLegend />}
+          {graphTab === 'pipeline'  && <JNodeGraph nodes={PIPE_NODES}   edges={PIPE_EDGES}   title="INTEL DATA PIPELINE"           height="420px" showLegend />}
+          {graphTab === 'its'       && <JNodeGraph nodes={ITS_NODES}    edges={ITS_EDGES}    title="NH-90 ITS · DEVICE FLOW"       height="460px" showLegend />}
+          {graphTab === 'alert'     && <JNodeGraph nodes={ALERT_NODES}  edges={ALERT_EDGES}  title="FAULT PROPAGATION · NH-90"     height="440px" showLegend />}
+          {graphTab === 'live'      && <JNodeGraph nodes={liveNodes}    edges={liveEdges}    title="LIVE GRAPH · DRAG NODES · ADD CONNECTIONS" height="440px" showLegend />}
         </div>
       </div>
 
@@ -832,15 +942,18 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 // ─── dashboard shell ─────────────────────────────────────────────────────────
 
 const NAV_ITEMS = [
-  { key: 'dashboard', icon: '⊞', label: 'DASHBOARD' },
-  { key: 'map',       icon: '🌐', label: 'TACTICAL MAP' },
-  { key: 'india',     icon: '🇮🇳', label: 'INDIA MAP' },
-  { key: 'units',     icon: '◈', label: 'FIELD UNITS' },
-  { key: 'comms',     icon: '📡', label: 'COMMS' },
-  { key: 'network',   icon: '◉', label: 'NETWORK' },
-  { key: 'intel',     icon: '⚡', label: 'INTELLIGENCE' },
-  { key: 'controls',  icon: '⚙', label: 'CONTROLS' },
-  { key: 'settings',  icon: '◐', label: 'SETTINGS' },
+  { key: 'dashboard',  icon: '⊞', label: 'DASHBOARD'   },
+  { key: 'map',        icon: '🌐', label: 'TACTICAL MAP' },
+  { key: 'india',      icon: '🇮🇳', label: 'INDIA MAP'   },
+  { key: 'datatable',  icon: '▣', label: 'DATA TABLE'  },
+  { key: 'forms',      icon: '✎', label: 'FORMS'       },
+  { key: 'components', icon: '◐', label: 'COMPONENTS'  },
+  { key: 'units',      icon: '◈', label: 'FIELD UNITS' },
+  { key: 'comms',      icon: '📡', label: 'COMMS'      },
+  { key: 'network',    icon: '◉', label: 'NETWORK'     },
+  { key: 'intel',      icon: '⚡', label: 'INTELLIGENCE'},
+  { key: 'controls',   icon: '⚙', label: 'CONTROLS'   },
+  { key: 'settings',   icon: '◐', label: 'SETTINGS'   },
 ]
 
 function ThemeToggle() {
@@ -893,7 +1006,10 @@ function Dashboard({ onLock }: { onLock: () => void }) {
       <div style={{ padding: '24px 28px' }}>
         {page === 'dashboard' && <PageDashboard />}
         {page === 'map'       && <PageMap />}
-        {page === 'india'     && <PageIndiaMap />}
+        {page === 'india'      && <PageIndiaMap />}
+        {page === 'datatable'  && <PageDataTable />}
+        {page === 'forms'      && <PageForms />}
+        {page === 'components' && <PageComponents />}
         {page === 'units'     && <PageUnits />}
         {page === 'comms'     && <PageComms />}
         {page === 'network'   && <PageNetwork />}
