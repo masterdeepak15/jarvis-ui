@@ -9,8 +9,8 @@ import {
   JHudFrame, JHudFrameCard, JSpinner,
   JBootScreen, JTable, JCommandPalette, JRadialMenu, JRadialItem, JNodeGraph,
   JToastProvider, useToast,
-} from 'jarvis-ui'
-import type { JCommand, JTableColumn, JTableRow, NodeDef, EdgeDef, JChartPoint } from 'jarvis-ui'
+} from '@masterdeepak15/jarvis-ui'
+import type { JCommand, JTableColumn, JTableRow, NodeDef, EdgeDef, JChartPoint } from '@masterdeepak15/jarvis-ui'
 
 const CHART_POINTS: JChartPoint[] = [
   { label: 'Jan', value: 12 }, { label: 'Feb', value: 28 }, { label: 'Mar', value: 18 },

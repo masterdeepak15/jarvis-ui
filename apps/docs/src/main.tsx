@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { JThemeProvider } from 'jarvis-ui'
-import 'jarvis-ui/styles'
+import { JThemeProvider } from '@masterdeepak15/jarvis-ui'
+import '@masterdeepak15/jarvis-ui/styles'
 import App from './App'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
