@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { PageMap } from './PageMap'
 import {
   JThemeProvider, JThemePicker, useTheme,
   JPageLayout, JNavItem,
@@ -734,6 +735,7 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 
 const NAV_ITEMS = [
   { key: 'dashboard', icon: '⊞', label: 'DASHBOARD' },
+  { key: 'map',       icon: '🌐', label: 'TACTICAL MAP' },
   { key: 'units',     icon: '◈', label: 'FIELD UNITS' },
   { key: 'comms',     icon: '📡', label: 'COMMS' },
   { key: 'network',   icon: '◉', label: 'NETWORK' },
@@ -757,6 +759,7 @@ function Dashboard({ onLock }: { onLock: () => void }) {
     <JPageLayout systemName="JARVIS" version="v1.0.0" sidebar={sidebar} showRec showLive>
       <div style={{ padding: '24px 28px' }}>
         {page === 'dashboard' && <PageDashboard />}
+        {page === 'map'       && <PageMap />}
         {page === 'units'     && <PageUnits />}
         {page === 'comms'     && <PageComms />}
         {page === 'network'   && <PageNetwork />}
