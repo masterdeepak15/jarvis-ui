@@ -124,3 +124,9 @@ export type { JGaugeChartProps } from './components/charts/JGaugeChart'
 export { JGaugeChart }           from './components/charts/JGaugeChart'
 export type { JRadarChartProps } from './components/charts/JRadarChart'
 export { JRadarChart }           from './components/charts/JRadarChart'
+
+// Components — interactive
+export type { JTableColumn, JTableRow, JTableProps } from './components/ui/JTable'
+export { JTable }                                    from './components/ui/JTable'
+export type { JCommand, JCommandPaletteProps }       from './components/ui/JCommandPalette'
+export { JCommandPalette }                           from './components/ui/JCommandPalette'
