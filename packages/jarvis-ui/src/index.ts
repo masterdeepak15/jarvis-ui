@@ -134,3 +134,9 @@ export type { JTableColumn, JTableRow, JTableProps } from './components/ui/JTabl
 export { JTable }                                    from './components/ui/JTable'
 export type { JCommand, JCommandPaletteProps }       from './components/ui/JCommandPalette'
 export { JCommandPalette }                           from './components/ui/JCommandPalette'
+
+// Components — radial menu
+export type { JRadialItemDef, JRadialMenuProps } from './components/ui/JRadialMenu'
+export { JRadialMenu, RadialMenuContext, useRadialMenu } from './components/ui/JRadialMenu'
+export type { JRadialItemProps }                 from './components/ui/JRadialItem'
+export { JRadialItem }                           from './components/ui/JRadialItem'
