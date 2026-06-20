@@ -187,7 +187,7 @@ export default function App() {
         <Section title="FORM CONTROLS">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, maxWidth: 640 }}>
             <JFormField label="CALLSIGN">
-              <JInput value={textVal} onChange={v => setTextVal(v)} placeholder="Enter callsign..." />
+              <JInput value={textVal} onChange={(v: string) => setTextVal(v)} placeholder="Enter callsign..." />
             </JFormField>
             <JFormField label="UNIT">
               <JSelect
@@ -434,7 +434,7 @@ export default function App() {
           visible={palette}
           onClose={() => setPalette(false)}
           commands={COMMANDS}
-          onExecute={cmd => { setPalette(false); console.log('execute:', cmd.key) }}
+          onExecute={(cmd: JCommand) => { setPalette(false); console.log('execute:', cmd.key) }}
         />
 
         {/* Footer */}
