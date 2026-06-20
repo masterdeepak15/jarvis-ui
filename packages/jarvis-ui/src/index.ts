@@ -98,3 +98,11 @@ export type { JAccordionProps } from './components/ui/JAccordion'
 export { JAccordion } from './components/ui/JAccordion'
 export type { JPaginationProps } from './components/ui/JPagination'
 export { JPagination } from './components/ui/JPagination'
+
+// Components — HUD visualizations
+export type { JArcMeterProps } from './components/ui/JArcMeter'
+export { JArcMeter } from './components/ui/JArcMeter'
+export type { JWaveformProps } from './components/ui/JWaveform'
+export { JWaveform } from './components/ui/JWaveform'
+export type { JOrbProps } from './components/ui/JOrb'
+export { JOrb } from './components/ui/JOrb'
