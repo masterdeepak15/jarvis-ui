@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { PageMap } from './PageMap'
+import { PageIndiaMap } from './PageIndiaMap'
 import {
   JThemeProvider, JThemePicker, useTheme,
   JPageLayout, JNavItem,
@@ -71,6 +72,7 @@ const COMMANDS: JCommand[] = [
   { key: 'settings',label: 'Settings',         group: 'Navigate', icon: '◐' },
   { key: 'lock',    label: 'Lock System',      group: 'Actions',  icon: '🔒' },
 ]
+// ── Graph 1: tactical field network ──────────────────────────────────────────
 const NODES: NodeDef[] = [
   { id: 'hq',    label: 'HQ BASE',    x: 320, y: 160, type: 'hub' },
   { id: 'sa',    label: 'ALPHA',      x: 80,  y: 60,  pulse: true },
@@ -87,6 +89,76 @@ const EDGES: EdgeDef[] = [
   { from: 'sat', to: 'hq', color: 'green', animDur: 1.2 },
   { from: 'hq', to: 'relay' },
   { from: 'relay', to: 'out', color: 'green', animDur: 1.8 },
+]
+
+// ── Graph 2: org hierarchy ────────────────────────────────────────────────────
+const ORG_NODES: NodeDef[] = [
+  { id: 'ceo',  label: 'DIRECTOR',  x: 300, y: 30,  type: 'hub', color: 'green' },
+  { id: 'ops',  label: 'OPS DIV',   x: 100, y: 130, type: 'hex' },
+  { id: 'intel',label: 'INTEL DIV', x: 300, y: 130, type: 'hex', color: 'amber' },
+  { id: 'tech', label: 'TECH DIV',  x: 500, y: 130, type: 'hex', color: 'green' },
+  { id: 'f1',   label: 'UNIT A',    x: 40,  y: 250 },
+  { id: 'f2',   label: 'UNIT B',    x: 160, y: 250, color: 'amber' },
+  { id: 'f3',   label: 'ANALYST',   x: 260, y: 250, color: 'amber' },
+  { id: 'f4',   label: 'SIGINT',    x: 360, y: 250, color: 'amber', pulse: true },
+  { id: 'f5',   label: 'SYSTEMS',   x: 460, y: 250, color: 'green' },
+  { id: 'f6',   label: 'CYBER',     x: 560, y: 250, color: 'green', pulse: true },
+]
+const ORG_EDGES: EdgeDef[] = [
+  { from: 'ceo', to: 'ops',   color: 'cyan' },
+  { from: 'ceo', to: 'intel', color: 'amber' },
+  { from: 'ceo', to: 'tech',  color: 'green' },
+  { from: 'ops',   to: 'f1', color: 'cyan' },
+  { from: 'ops',   to: 'f2', color: 'amber' },
+  { from: 'intel', to: 'f3', color: 'amber' },
+  { from: 'intel', to: 'f4', color: 'amber', style: 'dashed', animDur: 1.0 },
+  { from: 'tech',  to: 'f5', color: 'green' },
+  { from: 'tech',  to: 'f6', color: 'green', animDur: 1.2 },
+]
+
+// ── Graph 3: microservices topology ──────────────────────────────────────────
+const SVC_NODES: NodeDef[] = [
+  { id: 'gw',   label: 'GATEWAY',   x: 300, y: 20,  type: 'hub' },
+  { id: 'auth', label: 'AUTH SVC',  x: 80,  y: 120, color: 'amber', pulse: true },
+  { id: 'api',  label: 'API SVC',   x: 300, y: 120 },
+  { id: 'ws',   label: 'WS SVC',    x: 520, y: 120, color: 'green' },
+  { id: 'db',   label: 'POSTGRES',  x: 140, y: 250, type: 'diamond', color: 'amber' },
+  { id: 'cache',label: 'REDIS',     x: 300, y: 250, type: 'diamond', color: 'green' },
+  { id: 'queue',label: 'QUEUE',     x: 460, y: 250, type: 'diamond' },
+  { id: 'worker',label: 'WORKER',   x: 560, y: 180, color: 'red', pulse: true },
+]
+const SVC_EDGES: EdgeDef[] = [
+  { from: 'gw',  to: 'auth', color: 'amber', animDur: 0.8 },
+  { from: 'gw',  to: 'api' },
+  { from: 'gw',  to: 'ws',   color: 'green' },
+  { from: 'api', to: 'db',   color: 'amber' },
+  { from: 'api', to: 'cache',color: 'green', animDur: 0.6 },
+  { from: 'api', to: 'queue',style: 'dashed' },
+  { from: 'queue',to: 'worker', color: 'red', animDur: 1.0 },
+  { from: 'auth', to: 'cache', color: 'green', style: 'dashed' },
+]
+
+// ── Graph 4: data pipeline ───────────────────────────────────────────────────
+const PIPE_NODES: NodeDef[] = [
+  { id: 'src1', label: 'SENSOR A', x: 40,  y: 80,  color: 'green', pulse: true },
+  { id: 'src2', label: 'SENSOR B', x: 40,  y: 200, color: 'green', pulse: true },
+  { id: 'src3', label: 'FEED C',   x: 40,  y: 310, color: 'amber' },
+  { id: 'ingest',label:'INGEST',   x: 180, y: 190, type: 'hex' },
+  { id: 'proc', label: 'PROCESS',  x: 330, y: 190, type: 'hub', color: 'amber' },
+  { id: 'ml',   label: 'ML MODEL', x: 330, y: 80,  type: 'diamond', color: 'green', pulse: true },
+  { id: 'alert',label: 'ALERTS',   x: 480, y: 80,  color: 'red', pulse: true },
+  { id: 'store',label: 'STORAGE',  x: 480, y: 190, type: 'diamond' },
+  { id: 'dash', label: 'DASHBOARD',x: 590, y: 310, type: 'hex', color: 'green' },
+]
+const PIPE_EDGES: EdgeDef[] = [
+  { from: 'src1', to: 'ingest', color: 'green', animDur: 0.7 },
+  { from: 'src2', to: 'ingest', color: 'green', animDur: 0.9 },
+  { from: 'src3', to: 'ingest', color: 'amber', animDur: 1.1 },
+  { from: 'ingest',to: 'proc' },
+  { from: 'proc', to: 'ml',    color: 'green', animDur: 0.8 },
+  { from: 'proc', to: 'store', animDur: 1.4 },
+  { from: 'ml',   to: 'alert', color: 'red',   animDur: 0.5 },
+  { from: 'store',to: 'dash',  color: 'green' },
 ]
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -350,13 +422,38 @@ function PageComms() {
 }
 
 function PageNetwork() {
+  const [graphTab, setGraphTab] = useState<'tactical'|'org'|'services'|'pipeline'>('tactical')
   return (
     <Col gap={28}>
+      {/* ── graph tab selector ──────────────────────────────────────────── */}
       <div>
-        <SectionTitle>NETWORK TOPOLOGY</SectionTitle>
-        <JNodeGraph nodes={NODES} edges={EDGES} title="FIELD NETWORK MAP" height="420px" showLegend />
+        <SectionTitle>NODE RELATIONSHIP GRAPHS</SectionTitle>
+        <Row gap={6} wrap={false}>
+          {([
+            { key: 'tactical', label: '◉ TACTICAL NETWORK' },
+            { key: 'org',      label: '⊞ ORG HIERARCHY' },
+            { key: 'services', label: '◈ MICROSERVICES' },
+            { key: 'pipeline', label: '▶ DATA PIPELINE' },
+          ] as const).map(t => (
+            <button key={t.key} onClick={() => setGraphTab(t.key)} style={{
+              padding: '5px 14px', fontFamily: "'Courier New',monospace", fontSize: 8,
+              letterSpacing: '0.1em', cursor: 'pointer',
+              background: graphTab === t.key ? 'var(--j-accent-18)' : 'var(--j-bg-card)',
+              border: `1px solid ${graphTab === t.key ? 'var(--j-accent-50)' : 'var(--j-border-dim)'}`,
+              color:  graphTab === t.key ? 'var(--j-accent)' : 'var(--j-text-muted)',
+              clipPath: 'polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)',
+            }}>{t.label}</button>
+          ))}
+        </Row>
+        <div style={{ marginTop: 12 }}>
+          {graphTab === 'tactical'  && <JNodeGraph nodes={NODES}      edges={EDGES}      title="FIELD NETWORK MAP"           height="420px" showLegend />}
+          {graphTab === 'org'       && <JNodeGraph nodes={ORG_NODES}  edges={ORG_EDGES}  title="COMMAND STRUCTURE — ORG TREE" height="380px" showLegend />}
+          {graphTab === 'services'  && <JNodeGraph nodes={SVC_NODES}  edges={SVC_EDGES}  title="MICROSERVICES TOPOLOGY"       height="380px" showLegend />}
+          {graphTab === 'pipeline'  && <JNodeGraph nodes={PIPE_NODES} edges={PIPE_EDGES} title="INTEL DATA PIPELINE"          height="420px" showLegend />}
+        </div>
       </div>
 
+      {/* ── connection status ────────────────────────────────────────────── */}
       <div>
         <SectionTitle>CONNECTION STATUS</SectionTitle>
         <Row gap={16}>
@@ -379,6 +476,7 @@ function PageNetwork() {
         </Row>
       </div>
 
+      {/* ── signal intelligence ──────────────────────────────────────────── */}
       <div>
         <SectionTitle>SIGNAL INTELLIGENCE</SectionTitle>
         <Row gap={24}>
@@ -736,6 +834,7 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 const NAV_ITEMS = [
   { key: 'dashboard', icon: '⊞', label: 'DASHBOARD' },
   { key: 'map',       icon: '🌐', label: 'TACTICAL MAP' },
+  { key: 'india',     icon: '🇮🇳', label: 'INDIA MAP' },
   { key: 'units',     icon: '◈', label: 'FIELD UNITS' },
   { key: 'comms',     icon: '📡', label: 'COMMS' },
   { key: 'network',   icon: '◉', label: 'NETWORK' },
@@ -794,6 +893,7 @@ function Dashboard({ onLock }: { onLock: () => void }) {
       <div style={{ padding: '24px 28px' }}>
         {page === 'dashboard' && <PageDashboard />}
         {page === 'map'       && <PageMap />}
+        {page === 'india'     && <PageIndiaMap />}
         {page === 'units'     && <PageUnits />}
         {page === 'comms'     && <PageComms />}
         {page === 'network'   && <PageNetwork />}
