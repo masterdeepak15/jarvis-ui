@@ -744,6 +744,34 @@ const NAV_ITEMS = [
   { key: 'settings',  icon: '◐', label: 'SETTINGS' },
 ]
 
+function ThemeToggle() {
+  const { theme, setPreset } = useTheme()
+  const isLight = theme.preset === 'white'
+  return (
+    <button
+      onClick={() => setPreset(isLight ? 'cyan' : 'white')}
+      title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+      style={{
+        display:        'flex',
+        alignItems:     'center',
+        gap:            6,
+        padding:        '4px 12px',
+        background:     isLight ? 'var(--j-accent-18)' : 'var(--j-bg-card)',
+        border:         '1px solid var(--j-border)',
+        color:          'var(--j-accent)',
+        fontFamily:     "'Courier New', monospace",
+        fontSize:       9,
+        letterSpacing:  '0.12em',
+        cursor:         'pointer',
+        clipPath:       'polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)',
+        transition:     'all .15s',
+      }}
+    >
+      {isLight ? '◑ DARK MODE' : '◐ LIGHT MODE'}
+    </button>
+  )
+}
+
 function Dashboard({ onLock }: { onLock: () => void }) {
   const [page, setPage] = useState('dashboard')
 
@@ -755,8 +783,14 @@ function Dashboard({ onLock }: { onLock: () => void }) {
     </>
   )
 
+  const topBar = (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto', paddingRight: 8 }}>
+      <ThemeToggle />
+    </div>
+  )
+
   return (
-    <JPageLayout systemName="JARVIS" version="v1.0.0" sidebar={sidebar} showRec showLive>
+    <JPageLayout systemName="JARVIS" version="v1.0.0" sidebar={sidebar} showRec showLive topBar={topBar}>
       <div style={{ padding: '24px 28px' }}>
         {page === 'dashboard' && <PageDashboard />}
         {page === 'map'       && <PageMap />}

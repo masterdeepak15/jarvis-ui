@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@masterdeepak15/jarvis-ui": "workspace:*",
+    "@react-google-maps/api": "^2.20.8",
     "@types/leaflet": "^1.9.21",
     "leaflet": "^1.9.4",
     "react": "^18.3.1",
