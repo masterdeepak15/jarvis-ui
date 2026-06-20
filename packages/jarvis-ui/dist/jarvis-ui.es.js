@@ -86,9 +86,9 @@ const ke = {
   bgCard: "#030f1e",
   bgCardAlt: "#04111f",
   textPrimary: "#e0f7ff",
-  textSecondary: "#94a3b8",
-  textMuted: "#475569",
-  textDim: "#334155",
+  textSecondary: "#b8cfe0",
+  textMuted: "#8aaabb",
+  textDim: "#4e6070",
   durScan: "3.5s",
   durPulse: "2.8s",
   durSpin: "4s",
@@ -110,7 +110,10 @@ const ke = {
     bg: "#0f0800",
     bgCard: "#160c02",
     bgCardAlt: "#1a1004",
-    textPrimary: "#fff7ed"
+    textPrimary: "#fff7ed",
+    textSecondary: "#ffe0bc",
+    textMuted: "#c49060",
+    textDim: "#7a5030"
   },
   green: {
     name: "Green",
@@ -123,7 +126,10 @@ const ke = {
     bg: "#010f04",
     bgCard: "#021308",
     bgCardAlt: "#03180a",
-    textPrimary: "#f0fdf4"
+    textPrimary: "#f0fdf4",
+    textSecondary: "#c0f0cc",
+    textMuted: "#70b080",
+    textDim: "#3a6040"
   },
   red: {
     name: "Red",
@@ -136,7 +142,10 @@ const ke = {
     bg: "#0f0002",
     bgCard: "#160205",
     bgCardAlt: "#1a0306",
-    textPrimary: "#fff1f2"
+    textPrimary: "#fff1f2",
+    textSecondary: "#ffd0cc",
+    textMuted: "#c07068",
+    textDim: "#703030"
   },
   purple: {
     name: "Purple",
@@ -149,7 +158,10 @@ const ke = {
     bg: "#050010",
     bgCard: "#080018",
     bgCardAlt: "#0a001e",
-    textPrimary: "#faf5ff"
+    textPrimary: "#faf5ff",
+    textSecondary: "#e0c8ff",
+    textMuted: "#9870c0",
+    textDim: "#504070"
   },
   white: {
     name: "White",
