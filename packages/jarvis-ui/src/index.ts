@@ -125,6 +125,10 @@ export { JGaugeChart }           from './components/charts/JGaugeChart'
 export type { JRadarChartProps } from './components/charts/JRadarChart'
 export { JRadarChart }           from './components/charts/JRadarChart'
 
+// Components — boot
+export type { JBootScreenProps } from './components/ui/JBootScreen'
+export { JBootScreen }           from './components/ui/JBootScreen'
+
 // Components — interactive
 export type { JTableColumn, JTableRow, JTableProps } from './components/ui/JTable'
 export { JTable }                                    from './components/ui/JTable'
