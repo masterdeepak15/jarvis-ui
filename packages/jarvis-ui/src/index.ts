@@ -106,3 +106,21 @@ export type { JWaveformProps } from './components/ui/JWaveform'
 export { JWaveform } from './components/ui/JWaveform'
 export type { JOrbProps } from './components/ui/JOrb'
 export { JOrb } from './components/ui/JOrb'
+
+// Chart types
+export type { JChartPoint, JDonutSegment, JRadarAxis } from './components/charts/JChartTypes'
+export type { JSparkTrend, JChartOrientation }         from './components/charts/JChartTypes'
+
+// Components — charts
+export type { JSparklineProps }  from './components/charts/JSparkline'
+export { JSparkline }            from './components/charts/JSparkline'
+export type { JBarChartProps }   from './components/charts/JBarChart'
+export { JBarChart }             from './components/charts/JBarChart'
+export type { JLineChartProps }  from './components/charts/JLineChart'
+export { JLineChart }            from './components/charts/JLineChart'
+export type { JDonutChartProps } from './components/charts/JDonutChart'
+export { JDonutChart }           from './components/charts/JDonutChart'
+export type { JGaugeChartProps } from './components/charts/JGaugeChart'
+export { JGaugeChart }           from './components/charts/JGaugeChart'
+export type { JRadarChartProps } from './components/charts/JRadarChart'
+export { JRadarChart }           from './components/charts/JRadarChart'
