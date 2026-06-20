@@ -88,3 +88,13 @@ export { JToastProvider, useToast } from './components/ui/JToastProvider'
 // Components — composite
 export type { JStatCardDataRow, JStatCardProps } from './components/ui/JStatCard'
 export { JStatCard } from './components/ui/JStatCard'
+
+// Components — navigation
+export type { JTabsProps } from './components/ui/JTabs'
+export { JTabs } from './components/ui/JTabs'
+export type { JTabProps } from './components/ui/JTab'
+export { JTab } from './components/ui/JTab'
+export type { JAccordionProps } from './components/ui/JAccordion'
+export { JAccordion } from './components/ui/JAccordion'
+export type { JPaginationProps } from './components/ui/JPagination'
+export { JPagination } from './components/ui/JPagination'
