@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# Allow the built library dist so Vercel can use it without rebuilding
+!packages/jarvis-ui/dist/
 .env
 .env.local
 *.local

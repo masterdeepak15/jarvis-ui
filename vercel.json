@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm --filter @masterdeepak15/jarvis-ui build && pnpm --filter docs build",
+  "buildCommand": "pnpm --filter docs build",
   "outputDirectory": "apps/docs/dist",
   "installCommand": "pnpm install",
   "framework": "vite"
