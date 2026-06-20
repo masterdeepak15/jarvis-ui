@@ -140,3 +140,7 @@ export type { JRadialItemDef, JRadialMenuProps } from './components/ui/JRadialMe
 export { JRadialMenu, RadialMenuContext, useRadialMenu } from './components/ui/JRadialMenu'
 export type { JRadialItemProps }                 from './components/ui/JRadialItem'
 export { JRadialItem }                           from './components/ui/JRadialItem'
+
+// Components — node graph
+export type { NType, EdgeStyle, NodeDef, EdgeDef, JNodeGraphProps } from './components/ui/JNodeGraph'
+export { JNodeGraph }                                                from './components/ui/JNodeGraph'
