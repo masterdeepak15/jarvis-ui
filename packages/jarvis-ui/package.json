@@ -1,6 +1,37 @@
 {
-  "name": "jarvis-ui",
+  "name": "@masterdeepak15/jarvis-ui",
   "version": "1.0.0",
+  "description": "JARVIS UI — HUD-style React component library. Sci-fi / military aesthetic with dark themes, animated SVG, radial menus, node graphs, and 50+ components.",
+  "keywords": [
+    "react",
+    "ui",
+    "component-library",
+    "hud",
+    "sci-fi",
+    "dashboard",
+    "dark-theme",
+    "jarvis",
+    "node-graph",
+    "radial-menu",
+    "data-visualization",
+    "typescript"
+  ],
+  "author": {
+    "name": "Deepak Chougale",
+    "url": "https://github.com/masterdeepak15"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/masterdeepak15/jarvis-ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/masterdeepak15/jarvis-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/masterdeepak15/jarvis-ui/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/jarvis-ui.cjs.js",
   "module": "./dist/jarvis-ui.es.js",
@@ -14,7 +45,12 @@
     "./styles": "./dist/jarvis-ui.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "*.css"
   ],
   "scripts": {
     "dev": "vite build --watch",
@@ -25,6 +61,10 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": false },
+    "react-dom": { "optional": false }
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",

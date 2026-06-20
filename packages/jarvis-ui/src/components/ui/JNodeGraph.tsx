@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useId } from 'react'
 import type { CSSProperties } from 'react'
-import type { JColor, JState } from '../../theme/JarvisTokens'
+import type { JColor } from '../../theme/JarvisTokens'
 
 export type NType     = 'chip' | 'hub' | 'diamond' | 'hex'
 export type EdgeStyle = 'solid' | 'dashed' | 'dotted'
