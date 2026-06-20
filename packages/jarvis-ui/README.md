@@ -4,6 +4,9 @@
 
 [![npm](https://img.shields.io/npm/v/@masterdeepak15/jarvis-ui)](https://www.npmjs.com/package/@masterdeepak15/jarvis-ui)
 [![license](https://img.shields.io/npm/l/@masterdeepak15/jarvis-ui)](./LICENSE)
+[![demo](https://img.shields.io/badge/live%20demo-jarvis--ui--docs.vercel.app-00e5ff?style=flat&logo=vercel&logoColor=white)](https://jarvis-ui-docs.vercel.app/)
+
+> **Live demo:** [https://jarvis-ui-docs.vercel.app/](https://jarvis-ui-docs.vercel.app/)
 
 ---
 
