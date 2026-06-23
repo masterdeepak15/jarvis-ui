@@ -1,6 +1,6 @@
 ---
-name: jarvis-ui
-description: Use this skill whenever working with @masterdeepak15/jarvis-ui — the HUD-style React component library. Trigger on any mention of JButton, JInput, JModal, JNodeGraph, JTable, JPagination, JAlert, JFormField, JThemeProvider, JHudBar, JRadialMenu, JCommandPalette, JBootScreen, JSparkline, JGaugeChart, or any other J-prefixed component. Also trigger when user says "jarvis ui", "jarvis theme", "HUD component", "tactical UI", "sci-fi UI", or wants to add/fix/use any component from this library.
+name: jarvis-ui-react
+description: Use this skill whenever working with @masterdeepak15/jarvis-ui — the HUD-style React component library. Trigger on any mention of JButton, JInput, JModal, JNodeGraph, JTable, JPagination, JAlert, JFormField, JThemeProvider, JHudBar, JRadialMenu, JCommandPalette, JBootScreen, JSparkline, JGaugeChart, or any other J-prefixed component. Also trigger when user says "jarvis ui react", "jarvis theme", "HUD component", "tactical UI", "sci-fi UI", or wants to add/fix/use any component from the React library @masterdeepak15/jarvis-ui.
 ---
 
 # JARVIS UI — Component Skill
