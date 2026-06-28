@@ -103,6 +103,20 @@ export type { JRadialItemDef, JRadialMenuProps } from './components/ui/JRadialMe
 export { JRadialMenu, RadialMenuContext, useRadialMenu } from './components/ui/JRadialMenu';
 export type { JRadialItemProps } from './components/ui/JRadialItem';
 export { JRadialItem } from './components/ui/JRadialItem';
+export type { JDragWidgetProps } from './components/ui/JDragWidget';
+export { JDragWidget } from './components/ui/JDragWidget';
+export type { JHudClockProps } from './components/ui/JHudClock';
+export { JHudClock } from './components/ui/JHudClock';
+export type { JArcReactorProps } from './components/ui/JArcReactor';
+export { JArcReactor } from './components/ui/JArcReactor';
+export type { JHeatmapCell, JHeatmapProps } from './components/ui/JHeatmap';
+export { JHeatmap } from './components/ui/JHeatmap';
+export type { JActivityFeedItem, JActivityFeedProps } from './components/ui/JActivityFeed';
+export { JActivityFeed } from './components/ui/JActivityFeed';
+export type { JKPITickerItem, JKPITickerProps } from './components/ui/JKPITicker';
+export { JKPITicker } from './components/ui/JKPITicker';
+export type { JWidgetSlot, JHudCanvasProps } from './components/ui/JHudCanvas';
+export { JHudCanvas } from './components/ui/JHudCanvas';
 export type { NType, EdgeStyle, NodeDef, EdgeDef, JNodeGraphProps } from './components/ui/JNodeGraph';
 export { JNodeGraph } from './components/ui/JNodeGraph';
 //# sourceMappingURL=index.d.ts.map

@@ -1,6 +1,6 @@
 {
   "name": "@masterdeepak15/jarvis-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JARVIS UI — HUD-style React component library. Sci-fi / military aesthetic with dark themes, animated SVG, radial menus, node graphs, and 50+ components.",
   "keywords": [
     "react",
@@ -63,8 +63,12 @@
     "react-dom": ">=18"
   },
   "peerDependenciesMeta": {
-    "react": { "optional": false },
-    "react-dom": { "optional": false }
+    "react": {
+      "optional": false
+    },
+    "react-dom": {
+      "optional": false
+    }
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",
