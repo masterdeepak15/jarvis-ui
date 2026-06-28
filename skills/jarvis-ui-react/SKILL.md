@@ -1,6 +1,6 @@
 ---
 name: jarvis-ui-react
-description: Use this skill whenever working with @masterdeepak15/jarvis-ui — the HUD-style React component library. Trigger on any mention of JButton, JInput, JModal, JNodeGraph, JTable, JPagination, JAlert, JFormField, JThemeProvider, JHudBar, JRadialMenu, JCommandPalette, JBootScreen, JSparkline, JGaugeChart, or any other J-prefixed component. Also trigger when user says "jarvis ui react", "jarvis theme", "HUD component", "tactical UI", "sci-fi UI", or wants to add/fix/use any component from the React library @masterdeepak15/jarvis-ui.
+description: Use this skill whenever working with @masterdeepak15/jarvis-ui — the HUD-style React component library. Trigger on any mention of JButton, JInput, JModal, JNodeGraph, JTable, JPagination, JAlert, JFormField, JThemeProvider, JHudBar, JRadialMenu, JCommandPalette, JBootScreen, JSparkline, JGaugeChart, PageShield, or any other J-prefixed component. Also trigger when user says "jarvis ui react", "jarvis theme", "HUD component", "tactical UI", "sci-fi UI", "shield HUD", "movies layout", "rainmeter", or wants to add/fix/use any component from the React library @masterdeepak15/jarvis-ui.
 ---
 
 # JARVIS UI — Component Skill
@@ -9,6 +9,51 @@ HUD-style React component library with 50+ components. Sci-fi / military aesthet
 
 **Live Demo:** https://jarvis-ui-docs.vercel.app/
 **npm:** `@masterdeepak15/jarvis-ui`
+
+---
+
+## 🎬 Layout Style — Ask First!
+
+When a **first-time user** sets up a new page or dashboard, **always ask** which layout style they prefer:
+
+```
+"Which layout style do you want?"
+
+  A) TYPICAL  — Standard dashboard layout. Sidebar navigation, data tables, 
+                 form panels, stat cards in a grid. Clean and information-dense.
+
+  B) MOVIES   — Cinematic HUD style. Inspired by SHIELD OS / Iron Man / 
+                 Avengers interfaces. Concentric radar rings, rotating tick rings,
+                 hex grid overlays, target lock brackets, animated sweep — 
+                 the full Rainmeter/sci-fi experience.
+```
+
+- **Typical** → use `JPageLayout` + standard component layout patterns.
+- **Movies / SHIELD** → use `PageShield` as reference, build with `RotatingRingSVG`, `RadarWidget`, `TargetLock`, `HexCell` primitives from `apps/docs/src/PageShield.tsx`.
+
+---
+
+## 🛡️ SHIELD HUD Page (`PageShield`)
+
+A full cinematic HUD page in `apps/docs/src/PageShield.tsx`. Already wired as nav item `shield` in `App.tsx`.
+
+**Widgets inside PageShield:**
+
+| Widget | Description |
+|--------|-------------|
+| `RadarWidget` | Canvas-based radar with hex grid, sweep, blips, concentric rings |
+| `RotatingRingSVG` | SVG ring with animated tick marks — wraps any content |
+| `TargetLock` | Animated corner-bracket target acquisition reticle |
+| `HexCell` | Hexagonal stat cell with SVG polygon background |
+
+These are **local** to the docs app (not exported from the npm library). Copy from `PageShield.tsx` when building new pages.
+
+**Key techniques used:**
+- `useRef` + `requestAnimationFrame` for smooth canvas radar sweep
+- `@keyframes spinF/spinR` CSS animations for ring rotation
+- SVG `<animateTransform>` for scan-line effect in target lock
+- `clipPath` hexagon shapes with double-polygon for depth
+- Canvas hex grid via 2D trigonometry
 
 ---
 

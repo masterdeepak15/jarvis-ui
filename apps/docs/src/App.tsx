@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { PageMap } from './PageMap'
 import { PageIndiaMap } from './PageIndiaMap'
+import { PageShield } from './PageShield'
 import { PageDataTable } from './PageDataTable'
 import { PageForms } from './PageForms'
 import { PageComponents } from './PageComponents'
@@ -943,6 +944,7 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 
 const NAV_ITEMS = [
   { key: 'dashboard',  icon: '⊞', label: 'DASHBOARD'   },
+  { key: 'shield',     icon: '◎', label: 'SHIELD HUD'  },
   { key: 'map',        icon: '🌐', label: 'TACTICAL MAP' },
   { key: 'india',      icon: '🇮🇳', label: 'INDIA MAP'   },
   { key: 'datatable',  icon: '▣', label: 'DATA TABLE'  },
@@ -1005,6 +1007,7 @@ function Dashboard({ onLock }: { onLock: () => void }) {
     <JPageLayout systemName="JARVIS" version="v1.0.0" sidebar={sidebar} showRec showLive topBar={topBar}>
       <div style={{ padding: '24px 28px' }}>
         {page === 'dashboard' && <PageDashboard />}
+        {page === 'shield'    && <PageShield />}
         {page === 'map'       && <PageMap />}
         {page === 'india'      && <PageIndiaMap />}
         {page === 'datatable'  && <PageDataTable />}
