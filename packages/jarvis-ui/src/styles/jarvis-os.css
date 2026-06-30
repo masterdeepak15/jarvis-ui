@@ -1,0 +1,466 @@
+/* ── Windows 11 tokens ─────────────────────────────────────── */
+[data-os-theme="windows11"] {
+  --os-font:         'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --os-bg:           #202020;
+  --os-surface:      rgba(32, 32, 32, 0.85);
+  --os-surface-alt:  rgba(44, 44, 44, 0.90);
+  --os-border:       rgba(255, 255, 255, 0.10);
+  --os-accent:       #0078d4;
+  --os-accent-hover: #1a8ae0;
+  --os-text:         rgba(255, 255, 255, 0.95);
+  --os-text-muted:   rgba(255, 255, 255, 0.55);
+  --os-radius:       8px;
+  --os-radius-sm:    4px;
+  --os-shadow:       0 8px 32px rgba(0, 0, 0, 0.60);
+  --os-backdrop:     blur(20px) saturate(180%);
+  --os-titlebar-h:   32px;
+  --os-taskbar-h:    48px;
+  --os-menubar-h:    0px;
+  --os-dock-h:       0px;
+}
+
+/* ── macOS tokens ──────────────────────────────────────────── */
+[data-os-theme="macos"] {
+  --os-font:         -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  --os-bg:           #1e1e1e;
+  --os-surface:      rgba(40, 40, 40, 0.75);
+  --os-surface-alt:  rgba(52, 52, 52, 0.80);
+  --os-border:       rgba(255, 255, 255, 0.12);
+  --os-accent:       #007aff;
+  --os-accent-hover: #1a8fff;
+  --os-text:         rgba(255, 255, 255, 0.92);
+  --os-text-muted:   rgba(255, 255, 255, 0.50);
+  --os-radius:       10px;
+  --os-radius-sm:    6px;
+  --os-shadow:       0 12px 40px rgba(0, 0, 0, 0.70);
+  --os-backdrop:     blur(24px) saturate(200%);
+  --os-titlebar-h:   28px;
+  --os-taskbar-h:    0px;
+  --os-menubar-h:    24px;
+  --os-dock-h:       64px;
+}
+
+/* ── Base OS element styles ────────────────────────────────── */
+.j-os-root {
+  width: 100%;
+  height: 100%;
+  font-family: var(--os-font);
+  color: var(--os-text);
+  box-sizing: border-box;
+}
+
+.j-os-root *, .j-os-root *::before, .j-os-root *::after {
+  box-sizing: border-box;
+}
+
+/* Window */
+.j-os-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--os-surface);
+  border: 1px solid var(--os-border);
+  border-radius: var(--os-radius);
+  box-shadow: var(--os-shadow);
+  backdrop-filter: var(--os-backdrop);
+  overflow: hidden;
+  will-change: transform;
+}
+
+.j-os-window--focused {
+  border-color: var(--os-accent);
+  box-shadow: var(--os-shadow), 0 0 0 1px var(--os-accent);
+}
+
+.j-os-window--maximized {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* Title bar */
+.j-os-titlebar {
+  display: flex;
+  align-items: center;
+  height: var(--os-titlebar-h);
+  padding: 0 8px;
+  flex-shrink: 0;
+  cursor: default;
+  user-select: none;
+  background: var(--os-surface-alt);
+  border-bottom: 1px solid var(--os-border);
+}
+
+.j-os-titlebar--draggable { cursor: grab; }
+.j-os-titlebar--draggable:active { cursor: grabbing; }
+
+.j-os-titlebar__title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--os-text);
+}
+
+/* Windows 11 controls */
+.j-os-win-controls {
+  display: flex;
+  gap: 0;
+  margin-left: 8px;
+}
+
+.j-os-win-btn {
+  width: 46px;
+  height: var(--os-titlebar-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--os-text);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.j-os-win-btn:hover { background: var(--os-surface); }
+.j-os-win-btn--close:hover { background: #c42b1c; color: #fff; }
+
+/* macOS traffic lights */
+.j-os-mac-controls {
+  display: flex;
+  gap: 8px;
+  margin-right: 8px;
+}
+
+.j-os-mac-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 0;
+  transition: filter 0.1s;
+}
+
+.j-os-mac-btn:hover { filter: brightness(0.8); }
+.j-os-mac-btn--close    { background: #ff5f57; }
+.j-os-mac-btn--minimize { background: #febc2e; }
+.j-os-mac-btn--maximize { background: #28c840; }
+
+/* Window body */
+.j-os-window__body {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+/* Resize handles */
+.j-os-resize {
+  position: absolute;
+  z-index: 10;
+}
+
+.j-os-resize--n  { top: -3px; left: 6px; right: 6px; height: 6px; cursor: n-resize; }
+.j-os-resize--s  { bottom: -3px; left: 6px; right: 6px; height: 6px; cursor: s-resize; }
+.j-os-resize--e  { right: -3px; top: 6px; bottom: 6px; width: 6px; cursor: e-resize; }
+.j-os-resize--w  { left: -3px; top: 6px; bottom: 6px; width: 6px; cursor: w-resize; }
+.j-os-resize--nw { top: -3px; left: -3px; width: 12px; height: 12px; cursor: nw-resize; }
+.j-os-resize--ne { top: -3px; right: -3px; width: 12px; height: 12px; cursor: ne-resize; }
+.j-os-resize--sw { bottom: -3px; left: -3px; width: 12px; height: 12px; cursor: sw-resize; }
+.j-os-resize--se { bottom: -3px; right: -3px; width: 12px; height: 12px; cursor: se-resize; }
+
+/* Desktop */
+.j-os-desktop {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.j-os-desktop__icons {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.j-os-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 72px;
+  padding: 8px 4px;
+  border-radius: var(--os-radius-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.j-os-icon:hover    { background: rgba(255,255,255,0.08); }
+.j-os-icon--active  { background: rgba(255,255,255,0.14); }
+
+.j-os-icon__emoji { font-size: 32px; line-height: 1; }
+.j-os-icon__label { font-size: 11px; color: var(--os-text); text-align: center; word-break: break-word; }
+
+/* Taskbar (Windows 11) */
+.j-os-taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--os-taskbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+  background: var(--os-surface);
+  border-top: 1px solid var(--os-border);
+  backdrop-filter: var(--os-backdrop);
+  z-index: 1000;
+}
+
+.j-os-taskbar__start {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--os-radius-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background 0.1s;
+}
+
+.j-os-taskbar__start:hover { background: rgba(255,255,255,0.08); }
+
+.j-os-taskbar__apps {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.j-os-taskbar__app {
+  height: 40px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--os-radius-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--os-text);
+  font-size: 12px;
+  font-family: var(--os-font);
+  transition: background 0.1s;
+  position: relative;
+}
+
+.j-os-taskbar__app:hover { background: rgba(255,255,255,0.08); }
+.j-os-taskbar__app--active { background: rgba(255,255,255,0.12); }
+.j-os-taskbar__app--active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--os-accent);
+}
+
+.j-os-taskbar__tray {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--os-text-muted);
+}
+
+/* Start Menu */
+.j-os-startmenu {
+  position: absolute;
+  bottom: calc(var(--os-taskbar-h) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 640px;
+  max-width: calc(100vw - 32px);
+  background: var(--os-surface);
+  border: 1px solid var(--os-border);
+  border-radius: var(--os-radius);
+  box-shadow: var(--os-shadow);
+  backdrop-filter: var(--os-backdrop);
+  padding: 24px;
+  z-index: 1100;
+}
+
+.j-os-startmenu__pinned {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.j-os-startmenu__pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: var(--os-radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--os-text);
+  font-family: var(--os-font);
+  font-size: 11px;
+  transition: background 0.1s;
+}
+
+.j-os-startmenu__pin:hover { background: rgba(255,255,255,0.08); }
+.j-os-startmenu__pin-icon  { font-size: 28px; }
+
+.j-os-startmenu__heading {
+  font-size: 11px;
+  color: var(--os-text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Dock (macOS) */
+.j-os-dock {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: var(--os-dock-h);
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--os-surface);
+  border: 1px solid var(--os-border);
+  border-radius: 16px;
+  backdrop-filter: var(--os-backdrop);
+  box-shadow: var(--os-shadow);
+  z-index: 1000;
+}
+
+.j-os-dock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.j-os-dock__item:hover { transform: scale(1.3) translateY(-8px); }
+
+.j-os-dock__icon { font-size: 36px; line-height: 1; }
+
+.j-os-dock__dot {
+  position: absolute;
+  bottom: -6px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--os-text-muted);
+}
+
+/* Menu Bar (macOS) */
+.j-os-menubar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--os-menubar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 16px;
+  background: var(--os-surface);
+  border-bottom: 1px solid var(--os-border);
+  backdrop-filter: var(--os-backdrop);
+  z-index: 1000;
+  font-size: 13px;
+}
+
+.j-os-menubar__item {
+  padding: 2px 8px;
+  border-radius: var(--os-radius-sm);
+  cursor: pointer;
+  color: var(--os-text);
+  transition: background 0.1s;
+  background: transparent;
+  border: none;
+  font-family: var(--os-font);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.j-os-menubar__item:hover { background: rgba(255,255,255,0.10); }
+
+.j-os-menubar__menu-item {
+  padding: 2px 8px;
+  cursor: pointer;
+  color: var(--os-text);
+  background: transparent;
+  border: none;
+  font-family: var(--os-font);
+  font-size: 13px;
+  transition: background 0.1s;
+  border-radius: var(--os-radius-sm);
+}
+
+.j-os-menubar__menu-item:hover { background: rgba(255,255,255,0.10); }
+
+.j-os-menubar__clock {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--os-text-muted);
+}
+
+.j-os-menubar__dropdown {
+  position: absolute;
+  top: var(--os-menubar-h);
+  min-width: 200px;
+  background: var(--os-surface);
+  border: 1px solid var(--os-border);
+  border-radius: var(--os-radius);
+  box-shadow: var(--os-shadow);
+  backdrop-filter: var(--os-backdrop);
+  padding: 4px;
+  z-index: 1200;
+}
+
+.j-os-menubar__dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-radius: var(--os-radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--os-text);
+  background: transparent;
+  border: none;
+  width: 100%;
+  font-family: var(--os-font);
+  text-align: left;
+}
+
+.j-os-menubar__dropdown-item:hover { background: rgba(255,255,255,0.10); }
+.j-os-menubar__shortcut { color: var(--os-text-muted); font-size: 11px; }
+.j-os-menubar__divider  { height: 1px; background: var(--os-border); margin: 4px 0; }
