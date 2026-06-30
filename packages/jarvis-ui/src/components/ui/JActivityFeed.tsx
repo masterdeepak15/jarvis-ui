@@ -25,10 +25,10 @@ export interface JActivityFeedProps {
 }
 
 const LEVEL_COLOR: Record<string, string> = {
-  active:  'var(--j-cyan)',
-  warning: 'var(--j-amber)',
-  error:   'var(--j-red)',
-  success: 'var(--j-green)',
+  active:  'var(--j-accent)',
+  warning: 'var(--j-warn)',
+  error:   'var(--j-err)',
+  success: 'var(--j-ok)',
   info:    'var(--j-text-muted)',
 }
 

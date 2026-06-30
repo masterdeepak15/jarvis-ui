@@ -14,11 +14,11 @@ export interface JArcReactorProps {
 }
 
 const COLORS: Record<string, string> = {
-  cyan:  '#00e5ff',
-  amber: '#f97316',
-  green: '#22c55e',
-  red:   '#ef4444',
-  blue:  '#3b82f6',
+  cyan:  'var(--j-accent)',
+  amber: 'var(--j-warn)',
+  green: 'var(--j-ok)',
+  red:   'var(--j-err)',
+  blue:  'var(--j-accent)',
 }
 
 export function JArcReactor({

@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 
 export interface JWidgetSlot {
   id: string
@@ -30,11 +30,11 @@ export interface JHudCanvasProps {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  cyan:  'var(--j-cyan)',
-  amber: 'var(--j-amber)',
-  green: 'var(--j-green)',
-  red:   'var(--j-red)',
-  blue:  'var(--j-blue)',
+  cyan:  'var(--j-accent)',
+  amber: 'var(--j-warn)',
+  green: 'var(--j-ok)',
+  red:   'var(--j-err)',
+  blue:  'var(--j-accent)',
 }
 
 export function JHudCanvas({

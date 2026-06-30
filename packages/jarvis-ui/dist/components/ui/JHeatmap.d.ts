@@ -6,7 +6,7 @@ export interface JHeatmapCell {
 export interface JHeatmapProps {
     /** 2D grid data. rows × cols */
     data: JHeatmapCell[][];
-    /** Color palette */
+    /** Color palette — maps to theme accent tokens, not hardcoded hex */
     color?: 'cyan' | 'amber' | 'green' | 'red';
     /** Cell size in px */
     cellSize?: number;

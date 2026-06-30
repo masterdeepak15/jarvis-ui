@@ -24,10 +24,10 @@ export interface JKPITickerProps {
 }
 
 const COLORS: Record<string, string> = {
-  cyan:  'var(--j-cyan)',
-  amber: 'var(--j-amber)',
-  green: 'var(--j-green)',
-  red:   'var(--j-red)',
+  cyan:  'var(--j-accent)',
+  amber: 'var(--j-warn)',
+  green: 'var(--j-ok)',
+  red:   'var(--j-err)',
 }
 
 export function JKPITicker({
@@ -65,7 +65,7 @@ export function JKPITicker({
   }, [items, speed, uid])
 
   const trendColor = (t?: string) =>
-    t === 'up' ? 'var(--j-green)' : t === 'down' ? 'var(--j-red)' : 'var(--j-text-muted)'
+    t === 'up' ? 'var(--j-ok)' : t === 'down' ? 'var(--j-err)' : 'var(--j-text-muted)'
 
   const renderItems = () =>
     items.map((item, i) => (

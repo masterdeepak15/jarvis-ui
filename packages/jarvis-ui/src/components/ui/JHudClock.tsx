@@ -14,11 +14,11 @@ export interface JHudClockProps {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  cyan:  'var(--j-cyan)',
-  amber: 'var(--j-amber)',
-  green: 'var(--j-green)',
-  red:   'var(--j-red)',
-  blue:  'var(--j-blue)',
+  cyan:  'var(--j-accent)',
+  amber: 'var(--j-warn)',
+  green: 'var(--j-ok)',
+  red:   'var(--j-err)',
+  blue:  'var(--j-accent)',
   white: 'var(--j-text-primary)',
 }
 
@@ -99,7 +99,7 @@ export function JHudClock({
           {/* Hands */}
           <line x1={cx} y1={cy} x2={hEnd.x} y2={hEnd.y} stroke={accent} strokeWidth={2.5} strokeLinecap="round" opacity={.9} />
           <line x1={cx} y1={cy} x2={mEnd.x} y2={mEnd.y} stroke={accent} strokeWidth={1.8} strokeLinecap="round" opacity={.85} />
-          <line x1={cx} y1={cy} x2={sEnd.x} y2={sEnd.y} stroke="var(--j-red)" strokeWidth={1} strokeLinecap="round" />
+          <line x1={cx} y1={cy} x2={sEnd.x} y2={sEnd.y} stroke="var(--j-err)" strokeWidth={1} strokeLinecap="round" />
 
           {/* Center dot */}
           <circle cx={cx} cy={cy} r={3} fill={accent} />

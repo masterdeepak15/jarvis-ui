@@ -24,38 +24,73 @@ function RadarWidget() {
     const cy = H / 2
     const R = Math.min(W, H) / 2 - 8
 
-    // Static blips
+    // Static blips — colors resolved live from theme each frame below,
+    // these tags just classify which semantic token each blip uses.
     const blips = [
-      { angle: 0.4, dist: 0.35, col: '#22c55e', size: 3 },
-      { angle: 1.2, dist: 0.62, col: '#00e5ff', size: 4 },
-      { angle: 2.1, dist: 0.48, col: '#f97316', size: 3 },
-      { angle: 3.5, dist: 0.75, col: '#22c55e', size: 3 },
-      { angle: 4.2, dist: 0.28, col: '#00e5ff', size: 5 },
-      { angle: 5.1, dist: 0.58, col: '#ef4444', size: 4 },
+      { angle: 0.4, dist: 0.35, tag: 'ok'   as const, size: 3 },
+      { angle: 1.2, dist: 0.62, tag: 'accent' as const, size: 4 },
+      { angle: 2.1, dist: 0.48, tag: 'warn' as const, size: 3 },
+      { angle: 3.5, dist: 0.75, tag: 'ok'   as const, size: 3 },
+      { angle: 4.2, dist: 0.28, tag: 'accent' as const, size: 5 },
+      { angle: 5.1, dist: 0.58, tag: 'err'  as const, size: 4 },
     ]
+
+    // Reads live CSS custom properties from the DOM — re-evaluated every
+    // frame so theme preset switches AND light/dark mode swaps reflect
+    // immediately in the canvas, since canvas context can't use var()
+    // directly the way regular DOM styles can.
+    const readThemeColors = () => {
+      const cs = getComputedStyle(canvas)
+      const get = (name: string, fallback: string) => {
+        const v = cs.getPropertyValue(name).trim()
+        return v || fallback
+      }
+      return {
+        accent: get('--j-accent', '#00e5ff'),
+        warn:   get('--j-warn',   '#f97316'),
+        err:    get('--j-err',    '#ef4444'),
+        ok:     get('--j-ok',     '#22c55e'),
+        bg:     get('--j-bg',     '#020d18'),
+        bgCard: get('--j-bg-card', '#030f1e'),
+      }
+    }
+
+    // Convert a hex color + alpha (0-1) into rgba() string — works with
+    // any live theme hex value, no hardcoded colors.
+    const hexToRgba = (hex: string, alpha: number) => {
+      const h = hex.replace('#', '')
+      const bigint = parseInt(h.length === 3
+        ? h.split('').map(c => c + c).join('')
+        : h, 16)
+      const r = (bigint >> 16) & 255
+      const g = (bigint >> 8) & 255
+      const b = bigint & 255
+      return `rgba(${r},${g},${b},${alpha})`
+    }
 
     const draw = () => {
       sweepRef.current = (sweepRef.current + 0.015) % (Math.PI * 2)
       const sweep = sweepRef.current
+      const theme = readThemeColors()
+      const accent = theme.accent
 
       ctx.clearRect(0, 0, W, H)
 
-      // Dark bg
-      ctx.fillStyle = 'rgba(0,10,20,0.95)'
+      // Dark bg — pulled from live theme background, not hardcoded
+      ctx.fillStyle = hexToRgba(theme.bg, 0.95)
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill()
 
       // Concentric rings
-      const accent = '#00e5ff'
       for (let i = 1; i <= 4; i++) {
         ctx.beginPath()
         ctx.arc(cx, cy, R * (i / 4), 0, Math.PI * 2)
-        ctx.strokeStyle = `rgba(0,229,255,${i === 4 ? 0.5 : 0.15})`
+        ctx.strokeStyle = hexToRgba(accent, i === 4 ? 0.5 : 0.15)
         ctx.lineWidth = i === 4 ? 1.5 : 0.7
         ctx.stroke()
       }
 
       // Cross hairs
-      ctx.strokeStyle = 'rgba(0,229,255,0.15)'
+      ctx.strokeStyle = hexToRgba(accent, 0.15)
       ctx.lineWidth = 0.7
       ctx.setLineDash([4, 4])
       ctx.beginPath(); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke()
@@ -63,7 +98,7 @@ function RadarWidget() {
       ctx.setLineDash([])
 
       // Hex grid overlay (subtle)
-      ctx.strokeStyle = 'rgba(0,229,255,0.06)'
+      ctx.strokeStyle = hexToRgba(accent, 0.06)
       ctx.lineWidth = 0.5
       const hexSize = 18
       for (let row = -10; row < 10; row++) {
@@ -83,19 +118,14 @@ function RadarWidget() {
         }
       }
 
-      // Sweep gradient
-      const grad = ctx.createConicalGradient
-        ? null // createConicalGradient not in all browsers
-        : null
-
       // Draw sweep as filled wedge
       ctx.save()
       ctx.translate(cx, cy)
       ctx.rotate(sweep)
       const sweepGrad = ctx.createLinearGradient(0, 0, R, 0)
-      sweepGrad.addColorStop(0, 'rgba(0,229,255,0)')
-      sweepGrad.addColorStop(0.6, 'rgba(0,229,255,0.08)')
-      sweepGrad.addColorStop(1, 'rgba(0,229,255,0.22)')
+      sweepGrad.addColorStop(0,   hexToRgba(accent, 0))
+      sweepGrad.addColorStop(0.6, hexToRgba(accent, 0.08))
+      sweepGrad.addColorStop(1,   hexToRgba(accent, 0.22))
       ctx.fillStyle = sweepGrad
       ctx.beginPath()
       ctx.moveTo(0, 0)
@@ -103,12 +133,14 @@ function RadarWidget() {
       ctx.closePath()
       ctx.fill()
       // Sweep line
-      ctx.strokeStyle = `rgba(0,229,255,0.8)`
+      ctx.strokeStyle = hexToRgba(accent, 0.8)
       ctx.lineWidth = 1.5
       ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(R, 0); ctx.stroke()
       ctx.restore()
 
-      // Blips — fade based on angle difference from sweep
+      // Blips — fade based on angle difference from sweep, colored from
+      // live theme tokens (accent/warn/err/ok), not hardcoded hex
+      const tagColor = { accent: theme.accent, warn: theme.warn, err: theme.err, ok: theme.ok }
       blips.forEach(b => {
         const bx = cx + R * b.dist * Math.cos(b.angle)
         const by = cy + R * b.dist * Math.sin(b.angle)
@@ -116,13 +148,14 @@ function RadarWidget() {
         if (da > Math.PI) da = Math.PI * 2 - da
         const alpha = Math.max(0, 1 - da / (Math.PI * 0.6))
         if (alpha < 0.01) return
+        const col = tagColor[b.tag]
         ctx.beginPath()
         ctx.arc(bx, by, b.size, 0, Math.PI * 2)
-        ctx.fillStyle = b.col + Math.round(alpha * 255).toString(16).padStart(2,'0')
+        ctx.fillStyle = hexToRgba(col, alpha)
         ctx.fill()
         // Glow ring
         ctx.beginPath(); ctx.arc(bx, by, b.size + 3, 0, Math.PI * 2)
-        ctx.strokeStyle = b.col + Math.round(alpha * 120).toString(16).padStart(2,'0')
+        ctx.strokeStyle = hexToRgba(col, alpha * 0.47)
         ctx.lineWidth = 1; ctx.stroke()
       })
 
@@ -130,7 +163,7 @@ function RadarWidget() {
       ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2)
       ctx.fillStyle = accent; ctx.fill()
       ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(0,229,255,0.4)'; ctx.lineWidth = 1; ctx.stroke()
+      ctx.strokeStyle = hexToRgba(accent, 0.4); ctx.lineWidth = 1; ctx.stroke()
 
       rafRef.current = requestAnimationFrame(draw)
     }
@@ -144,12 +177,11 @@ function RadarWidget() {
       ref={canvasRef}
       width={280}
       height={280}
-      style={{ display: 'block', borderRadius: '50%', background: 'rgba(0,10,20,0.95)' }}
+      style={{ display: 'block', borderRadius: '50%', background: 'var(--j-bg)' }}
     />
   )
 }
 
-// ─── Rotating ring SVG ────────────────────────────────────────────────────────
 function RotatingRingSVG({
   size = 240, rpm = 8, reverse = false, tickCount = 48, label = '', sublabel = '', children
 }: {
@@ -285,7 +317,7 @@ function TargetLock({ size = 80, active = true, label = '' }: {
 
 // ─── Hex stat cell ────────────────────────────────────────────────────────────
 function HexCell({ value, label, state }: { value: string, label: string, state?: 'ok'|'warn'|'err' }) {
-  const col = state === 'warn' ? 'var(--j-amber)' : state === 'err' ? 'var(--j-red)' : 'var(--j-accent)'
+  const col = state === 'warn' ? 'var(--j-warn)' : state === 'err' ? 'var(--j-err)' : 'var(--j-accent)'
   return (
     <div style={{
       position: 'relative', width: 90, height: 80, display: 'flex',
@@ -331,8 +363,8 @@ export function PageShield() {
   }, [])
 
   const threatColor = {
-    LOW: 'var(--j-green)', MODERATE: 'var(--j-amber)',
-    HIGH: 'var(--j-red)', CRITICAL: 'var(--j-red)',
+    LOW: 'var(--j-ok)', MODERATE: 'var(--j-warn)',
+    HIGH: 'var(--j-err)', CRITICAL: 'var(--j-err)',
   }[threatLevel]
 
   const pad2 = (n: number) => String(n).padStart(2, '0')

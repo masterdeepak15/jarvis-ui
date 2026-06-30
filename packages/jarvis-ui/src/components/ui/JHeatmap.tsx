@@ -7,7 +7,7 @@ export interface JHeatmapCell {
 export interface JHeatmapProps {
   /** 2D grid data. rows × cols */
   data: JHeatmapCell[][]
-  /** Color palette */
+  /** Color palette — maps to theme accent tokens, not hardcoded hex */
   color?: 'cyan' | 'amber' | 'green' | 'red'
   /** Cell size in px */
   cellSize?: number
@@ -21,21 +21,13 @@ export interface JHeatmapProps {
   style?: React.CSSProperties
 }
 
-const PALETTES: Record<string, [string, string]> = {
-  cyan:  ['#002233', '#00e5ff'],
-  amber: ['#1a0800', '#f97316'],
-  green: ['#001a08', '#22c55e'],
-  red:   ['#1a0000', '#ef4444'],
-}
-
-function lerp(a: string, b: string, t: number): string {
-  const hex = (h: string) => parseInt(h.slice(1), 16)
-  const r1 = (hex(a) >> 16) & 0xff, g1 = (hex(a) >> 8) & 0xff, b1 = hex(a) & 0xff
-  const r2 = (hex(b) >> 16) & 0xff, g2 = (hex(b) >> 8) & 0xff, b2 = hex(b) & 0xff
-  const ri = Math.round(r1 + (r2 - r1) * t)
-  const gi = Math.round(g1 + (g2 - g1) * t)
-  const bi = Math.round(b1 + (b2 - b1) * t)
-  return `#${ri.toString(16).padStart(2,'0')}${gi.toString(16).padStart(2,'0')}${bi.toString(16).padStart(2,'0')}`
+// Maps to real theme CSS variables — these swap automatically with
+// JThemeProvider preset changes and light/dark mode, unlike raw hex.
+const ACCENT_VAR: Record<string, string> = {
+  cyan:  'var(--j-accent)',
+  amber: 'var(--j-warn)',
+  green: 'var(--j-ok)',
+  red:   'var(--j-err)',
 }
 
 export function JHeatmap({
@@ -48,8 +40,7 @@ export function JHeatmap({
   className,
   style,
 }: JHeatmapProps) {
-  const [lo, hi] = PALETTES[color] ?? PALETTES.cyan
-  const accent = hi
+  const accent = ACCENT_VAR[color] ?? ACCENT_VAR.cyan
 
   return (
     <div className={className} style={{ fontFamily: "'Courier New', monospace", ...style }}>
@@ -62,9 +53,12 @@ export function JHeatmap({
         {data.map((row, ri) => (
           <div key={ri} style={{ display: 'flex', gap }}>
             {row.map((cell, ci) => {
-              const t   = Math.max(0, Math.min(100, cell.value)) / 100
-              const bg  = lerp(lo, hi, t)
-              const txt = t > 0.55 ? '#000' : hi
+              const t = Math.max(0, Math.min(100, cell.value)) / 100
+              // color-mix() blends the live theme accent with the card
+              // background — this re-renders correctly across every
+              // theme preset AND light/dark mode with zero hardcoded hex.
+              const bg  = `color-mix(in srgb, ${accent} ${Math.round(t * 100)}%, var(--j-bg-card))`
+              const txt = t > 0.55 ? 'var(--j-bg)' : accent
               return (
                 <div
                   key={ci}
@@ -73,14 +67,15 @@ export function JHeatmap({
                     width:          cellSize,
                     height:         cellSize,
                     background:     bg,
-                    border:         `1px solid ${accent}33`,
+                    border:         `1px solid ${accent}`,
+                    borderColor:    `color-mix(in srgb, ${accent} 35%, transparent)`,
                     display:        'flex',
                     alignItems:     'center',
                     justifyContent: 'center',
                     fontSize:       9,
                     color:          txt,
                     cursor:         'default',
-                    transition:     'transform .15s',
+                    transition:     'transform .15s, background .2s, color .2s',
                     flexShrink:     0,
                   }}
                   onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.15)'; (e.currentTarget as HTMLDivElement).style.zIndex = '5' }}
