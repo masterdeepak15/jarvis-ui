@@ -476,14 +476,14 @@
 }
 
 /* Windows 11: bottom-right */
-[data-os-theme="windows11"] .j-os-notif-stack {
+.j-os-notif-stack[data-os-theme="windows11"] {
   bottom: calc(var(--os-taskbar-h, 48px) + 12px);
   right: 12px;
   align-items: flex-end;
 }
 
 /* macOS: top-right */
-[data-os-theme="macos"] .j-os-notif-stack {
+.j-os-notif-stack[data-os-theme="macos"] {
   top: calc(var(--os-menubar-h, 24px) + 8px);
   right: 12px;
   align-items: flex-end;

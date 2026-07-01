@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
 import { useOSTheme } from '../shell/JOSThemeProvider'
@@ -27,9 +27,9 @@ export function useOSNotify(): OSNotifyContextValue {
 }
 
 const MAX_VISIBLE = 4
-let _notifId = 1
 
 export function JOSNotificationProvider({ children }: { children: ReactNode }) {
+  const notifIdRef = useRef(1)
   const [queue,   setQueue]   = useState<NotifEntry[]>([])
   const [visible, setVisible] = useState<NotifEntry[]>([])
   const theme = useOSTheme()
@@ -60,7 +60,7 @@ export function JOSNotificationProvider({ children }: { children: ReactNode }) {
   }, [visible, dismiss])
 
   const notify = useCallback((config: OSNotifyConfig) => {
-    const entry: NotifEntry = { ...config, id: `notif-${_notifId++}` }
+    const entry: NotifEntry = { ...config, id: `notif-${notifIdRef.current++}` }
     setVisible(prev => {
       if (prev.length < MAX_VISIBLE) return [...prev, entry]
       // queue it
