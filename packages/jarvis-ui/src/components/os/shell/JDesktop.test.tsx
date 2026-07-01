@@ -33,7 +33,7 @@ describe('JDesktop', () => {
     const icon = screen.getByText('📁').closest('[data-app-id]')!
     fireEvent.dblClick(icon)
     fireEvent.dblClick(icon)
-    expect(screen.getAllByText('Files')).toHaveLength(2) // icon label + window title
+    expect(screen.getAllByText('Files')).toHaveLength(3) // icon label + window title + taskbar button
   })
 
   it('windows11 theme renders JTaskbar', () => {

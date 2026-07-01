@@ -160,3 +160,12 @@ export { JHudCanvas }               from './components/ui/JHudCanvas'
 // Components — node graph
 export type { NType, EdgeStyle, NodeDef, EdgeDef, JNodeGraphProps } from './components/ui/JNodeGraph'
 export { JNodeGraph }                                                from './components/ui/JNodeGraph'
+
+// Components — OS shell (Windows 11 / macOS desktop)
+export type { JDesktopApp, JDesktopProps }         from './components/os/shell/JDesktop'
+export { JDesktop }                                from './components/os/shell/JDesktop'
+export type { WindowState, OpenWindowConfig, WindowManagerContextValue, JWindowManagerProps } from './components/os/shell/JWindowManager'
+export { JWindowManager, useWindowManager }        from './components/os/shell/JWindowManager'
+export type { JStartMenuProps }                    from './components/os/windows/JStartMenu'
+export { JStartMenu }                              from './components/os/windows/JStartMenu'
+export { JTaskbar }                                from './components/os/windows/JTaskbar'
