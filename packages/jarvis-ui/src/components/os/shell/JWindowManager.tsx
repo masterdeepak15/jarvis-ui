@@ -50,7 +50,9 @@ export function useWindowManager(): WindowManagerContextValue {
 }
 
 let _nextId = 1
-function genId(): string { return `win-${_nextId++}` }
+let _nextZ  = 10
+function genId(): string   { return `win-${_nextId++}` }
+function nextZ(): number   { return _nextZ++ }
 
 function clampWindow(
   x: number, y: number, w: number, h: number,
@@ -114,7 +116,7 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
     if (existing) {
       setFocusedId(existing.id)
       applyWindows(prev => prev.map(w =>
-        w.id === existing.id ? { ...w, minimized: false, zIndex: Date.now() } : w
+        w.id === existing.id ? { ...w, minimized: false, zIndex: nextZ() } : w
       ))
       return existing.id
     }
@@ -128,7 +130,7 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
         id, appId: config.appId, title: config.title, icon: config.icon,
         ...clamped,
         minimized: false, maximized: false,
-        zIndex: Date.now(),
+        zIndex: nextZ(),
         content: config.content,
       }
       return [...prev, win]
@@ -148,7 +150,7 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
   }, [applyWindows])
 
   const restoreWindow = useCallback((id: string) => {
-    applyWindows(prev => prev.map(w => w.id === id ? { ...w, minimized: false, zIndex: Date.now() } : w))
+    applyWindows(prev => prev.map(w => w.id === id ? { ...w, minimized: false, zIndex: nextZ() } : w))
     setFocusedId(id)
   }, [applyWindows])
 
@@ -158,7 +160,7 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
 
   const focusWindow = useCallback((id: string) => {
     setFocusedId(id)
-    applyWindows(prev => prev.map(w => w.id === id ? { ...w, zIndex: Date.now() } : w))
+    applyWindows(prev => prev.map(w => w.id === id ? { ...w, zIndex: nextZ() } : w))
   }, [applyWindows])
 
   const moveWindow = useCallback((id: string, x: number, y: number) => {

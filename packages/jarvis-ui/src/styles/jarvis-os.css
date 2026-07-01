@@ -573,7 +573,7 @@
   background: var(--os-surface);
   border-bottom: 1px solid var(--os-border);
   backdrop-filter: var(--os-backdrop);
-  z-index: 1000;
+  z-index: 9998;
   font-size: 13px;
 }
 
