@@ -5,6 +5,8 @@ import { PageShield } from './PageShield'
 import { PageDataTable } from './PageDataTable'
 import { PageForms } from './PageForms'
 import { PageComponents } from './PageComponents'
+import { PageWin11 } from './PageWin11'
+import { PageMacOS } from './PageMacOS'
 import {
   JThemeProvider, JThemePicker, useTheme,
   JPageLayout, JNavItem,
@@ -945,6 +947,8 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 const NAV_ITEMS = [
   { key: 'dashboard',  icon: '⊞', label: 'DASHBOARD'   },
   { key: 'shield',     icon: '◎', label: 'SHIELD HUD'  },
+  { key: 'win11',      icon: '🪟', label: 'WINDOWS 11'  },
+  { key: 'macos',      icon: '🍎', label: 'macOS'       },
   { key: 'map',        icon: '🌐', label: 'TACTICAL MAP' },
   { key: 'india',      icon: '🇮🇳', label: 'INDIA MAP'   },
   { key: 'datatable',  icon: '▣', label: 'DATA TABLE'  },
@@ -988,6 +992,31 @@ function ThemeToggle() {
 
 function Dashboard({ onLock }: { onLock: () => void }) {
   const [page, setPage] = useState('dashboard')
+
+  // OS Shell pages take the full viewport — bypass JPageLayout entirely
+  if (page === 'win11' || page === 'macos') {
+    return (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 100 }}>
+        {/* Back button overlay */}
+        <button
+          onClick={() => setPage('dashboard')}
+          style={{
+            position: 'absolute', top: page === 'win11' ? 8 : 36, left: 12, zIndex: 9999,
+            padding: '4px 12px', cursor: 'pointer', fontSize: 10, letterSpacing: '0.1em',
+            fontFamily: "'Courier New', monospace",
+            background: 'rgba(0,0,0,0.55)', color: '#fff',
+            border: '1px solid rgba(255,255,255,0.25)',
+            clipPath: 'polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          ← BACK
+        </button>
+        {page === 'win11' && <PageWin11 />}
+        {page === 'macos' && <PageMacOS />}
+      </div>
+    )
+  }
 
   const sidebar = (
     <>
