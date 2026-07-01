@@ -196,7 +196,7 @@ const DOCK_ZONE_H = 80
 
 function MacDesktopInner() {
   const { windows, openWindow, setDesktopSize } = useWindowManager()
-  const [dockVisible, setDockVisible] = useState(false)
+  const [dockVisible, setDockVisible] = useState(true)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -277,7 +277,7 @@ function MacDesktopInner() {
           right: 0,
           height: DOCK_ZONE_H,
           zIndex: 1001,
-          transform: dockVisible ? 'translateY(0)' : `translateY(${DOCK_ZONE_H - 4}px)`,
+          transform: dockVisible ? 'translateY(0)' : `translateY(${DOCK_ZONE_H - 16}px)`,
           transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
         onMouseEnter={() => setDockVisible(true)}
