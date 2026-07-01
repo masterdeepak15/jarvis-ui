@@ -7,6 +7,7 @@ import { PageForms } from './PageForms'
 import { PageComponents } from './PageComponents'
 import { PageWin11 } from './PageWin11'
 import { PageMacOS } from './PageMacOS'
+import { PageMovies } from './PageMovies'
 import {
   JThemeProvider, JThemePicker, useTheme,
   JPageLayout, JNavItem,
@@ -946,6 +947,7 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 
 const NAV_ITEMS = [
   { key: 'dashboard',  icon: '⊞', label: 'DASHBOARD'   },
+  { key: 'movies',     icon: '🎬', label: 'MOVIES HUD'  },
   { key: 'shield',     icon: '◎', label: 'SHIELD HUD'  },
   { key: 'win11',      icon: '🪟', label: 'WINDOWS 11'  },
   { key: 'macos',      icon: '🍎', label: 'macOS'       },
@@ -993,15 +995,18 @@ function ThemeToggle() {
 function Dashboard({ onLock }: { onLock: () => void }) {
   const [page, setPage] = useState('dashboard')
 
-  // OS Shell pages take the full viewport — bypass JPageLayout entirely
-  if (page === 'win11' || page === 'macos') {
+  // Full-screen pages — bypass JPageLayout entirely
+  if (page === 'movies' || page === 'win11' || page === 'macos') {
+    // movies: back btn overlays the HUD at top-left
+    // win11:  above the taskbar (taskbar is 48px at bottom, back btn at top)
+    // macos:  below the menu bar (menu bar is 28px at top)
+    const backTop = page === 'macos' ? 36 : 8
     return (
       <div style={{ position: 'fixed', inset: 0, zIndex: 100 }}>
-        {/* Back button overlay */}
         <button
           onClick={() => setPage('dashboard')}
           style={{
-            position: 'absolute', top: page === 'win11' ? 8 : 36, left: 12, zIndex: 9999,
+            position: 'absolute', top: backTop, left: 12, zIndex: 9999,
             padding: '4px 12px', cursor: 'pointer', fontSize: 10, letterSpacing: '0.1em',
             fontFamily: "'Courier New', monospace",
             background: 'rgba(0,0,0,0.55)', color: '#fff',
@@ -1012,8 +1017,9 @@ function Dashboard({ onLock }: { onLock: () => void }) {
         >
           ← BACK
         </button>
-        {page === 'win11' && <PageWin11 />}
-        {page === 'macos' && <PageMacOS />}
+        {page === 'movies' && <PageMovies />}
+        {page === 'win11'  && <PageWin11 />}
+        {page === 'macos'  && <PageMacOS />}
       </div>
     )
   }
