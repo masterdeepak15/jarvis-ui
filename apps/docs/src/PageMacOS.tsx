@@ -175,6 +175,11 @@ const macApps: JDesktopApp[] = [
     component: <JFileExplorer tree={fileTree} />,
   },
   {
+    id: 'terminal', icon: '⬛', label: 'Terminal',
+    defaultWidth: 680, defaultHeight: 420,
+    component: <TerminalApp />,
+  },
+  {
     id: 'activity', icon: '📊', label: 'Activity Monitor',
     defaultWidth: 760, defaultHeight: 540,
     component: <JTaskManager processes={processes} />,
@@ -186,12 +191,83 @@ const macApps: JDesktopApp[] = [
   },
 ]
 
+// ─── terminal app ────────────────────────────────────────────────────────────
+
+function TerminalApp() {
+  const [lines, setLines] = useState([
+    'Last login: Tue Jul  1 10:00:00 on ttys001',
+    'JARVIS Terminal — type ‘help’ for available commands.',
+    '',
+  ])
+  const [input, setInput] = useState('')
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [lines])
+
+  function run(raw: string) {
+    const cmd = raw.trim()
+    const [name, ...rest] = cmd.split(/\s+/)
+    const prompt = `jarvis@MacBook-Pro ~ % ${cmd}`
+
+    const CMDS: Record<string, () => string[]> = {
+      '':      () => [],
+      help:    () => ['Available: ls, pwd, whoami, uname, date, echo, clear, cat, history'],
+      ls:      () => ['Applications/   Desktop/   Documents/   Downloads/   Library/   Movies/   Music/   Pictures/'],
+      pwd:     () => ['/Users/jarvis'],
+      whoami:  () => ['jarvis'],
+      uname:   () => ['Darwin MacBook-Pro.local 24.3.0 Darwin Kernel Version 24.3.0: Fri Jan 17 00:00:00 PST 2025; root:xnu-11215.81.4~3/RELEASE_ARM64_T8112 arm64'],
+      date:    () => [new Date().toLocaleString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })],
+      echo:    () => [rest.join(' ')],
+      cat:     () => rest.length ? [`cat: ${rest[0]}: No such file or directory`] : ['usage: cat file'],
+      history: () => lines.filter(l => l.startsWith('jarvis@')).map((l, i) => `  ${i + 1}  ${l.replace(/^jarvis@.*?% /, '')}`),
+    }
+
+    if (name === 'clear') {
+      setLines([''])
+    } else {
+      const out = CMDS[name] ? CMDS[name]() : [`zsh: command not found: ${name}`]
+      setLines(prev => [...prev, prompt, ...out, ''])
+    }
+    setInput('')
+  }
+
+  const termStyle: React.CSSProperties = {
+    height: '100%', display: 'flex', flexDirection: 'column',
+    background: 'rgba(10, 10, 10, 0.97)', color: '#e2e2e2',
+    fontFamily: "'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace",
+    fontSize: 13, lineHeight: 1.55,
+  }
+
+  return (
+    <div style={termStyle}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '10px 14px' }}>
+        {lines.map((l, i) => (
+          <div key={i} style={{ color: l.startsWith('jarvis@') ? '#a8ff78' : l.startsWith('zsh:') ? '#ff6b6b' : '#e2e2e2' }}>
+            {l || ' '}
+          </div>
+        ))}
+        <div ref={bottomRef} />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '6px 14px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <span style={{ color: '#a8ff78', marginRight: 8, whiteSpace: 'nowrap' }}>jarvis@MacBook-Pro ~ %</span>
+        <input
+          autoFocus
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') run(input) }}
+          style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: '#e2e2e2', fontFamily: 'inherit', fontSize: 'inherit', caretColor: '#a8ff78' }}
+        />
+      </div>
+    </div>
+  )
+}
+
 // ─── desktop content ─────────────────────────────────────────────────────────
 
 const WALLPAPER = 'linear-gradient(160deg, #0e3460 0%, #1a5276 25%, #0b3d5e 50%, #1c2833 100%)'
 
 // Dock wrapper height: dock is 64px + 8px gap = 72px; add 8px buffer = 80px total
-// We slide it down by (80 - 4)px so only a 4px hover strip is visible at the bottom
+// We slide it down by (80 - 16)px leaving a 16px hover strip visible
 const DOCK_ZONE_H = 80
 
 function MacDesktopInner() {
@@ -289,7 +365,7 @@ function MacDesktopInner() {
           left: 0,
           right: 0,
           height: DOCK_ZONE_H,
-          zIndex: 1001,
+          zIndex: 9999,
           transform: dockTranslate,
           transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
