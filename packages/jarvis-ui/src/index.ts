@@ -177,8 +177,8 @@ export { JTaskbar }                                from './components/os/windows
 export { JDock }                                   from './components/os/macos/JDock'
 export type { JMenuBarMenu, JMenuBarProps }        from './components/os/macos/JMenuBar'
 export { JMenuBar }                                from './components/os/macos/JMenuBar'
-export type { OSNotifyConfig }                     from './components/os/shared/JOSNotification'
-export { JOSNotificationProvider, useOSNotify }    from './components/os/shared/JOSNotification'
+export type { OSNotifyConfig, OSNotifyRecord }                       from './components/os/shared/JOSNotification'
+export { JOSNotificationProvider, useOSNotify, useOSNotifyOptional } from './components/os/shared/JOSNotification'
 
 // Components — os apps
 export type { JFileNode, JFileExplorerProps }         from './components/os/apps/JFileExplorer'

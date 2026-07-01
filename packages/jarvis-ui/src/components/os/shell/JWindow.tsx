@@ -25,7 +25,9 @@ export function JWindow({ id }: JWindowProps) {
   const isWindows = theme === 'windows11'
 
   const wrapStyle: CSSProperties = win.maximized
-    ? { position: 'absolute', inset: 0, zIndex: win.zIndex }
+    ? isWindows
+      ? { position: 'absolute', top: 0, left: 0, right: 0, bottom: 'var(--os-taskbar-h)', zIndex: win.zIndex }
+      : { position: 'absolute', inset: 0, zIndex: win.zIndex }
     : { position: 'absolute', left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.zIndex }
 
   const wrapClass = [

@@ -10,12 +10,22 @@ export interface OSNotifyConfig {
   duration?: number  // ms, default 4000; 0 = persistent
 }
 
+export interface OSNotifyRecord {
+  id:        string
+  title:     string
+  body?:     string
+  icon?:     string
+  timestamp: string  // formatted HH:MM
+}
+
 interface NotifEntry extends OSNotifyConfig {
   id: string
 }
 
 interface OSNotifyContextValue {
-  notify: (config: OSNotifyConfig) => void
+  notify:   (config: OSNotifyConfig) => void
+  recent:   OSNotifyRecord[]
+  clearAll: () => void
 }
 
 const OSNotifyContext = createContext<OSNotifyContextValue | null>(null)
@@ -26,13 +36,20 @@ export function useOSNotify(): OSNotifyContextValue {
   return ctx
 }
 
+/** Returns null when called outside JOSNotificationProvider (safe for optional consumers). */
+export function useOSNotifyOptional(): OSNotifyContextValue | null {
+  return useContext(OSNotifyContext)
+}
+
 const MAX_VISIBLE = 4
+const MAX_RECENT  = 20
 
 export function JOSNotificationProvider({ children }: { children: ReactNode }) {
   const notifIdRef = useRef(1)
   const [queue,   setQueue]   = useState<NotifEntry[]>([])
   const [visible, setVisible] = useState<NotifEntry[]>([])
   const visibleRef = useRef<NotifEntry[]>([])
+  const [recent, setRecent]   = useState<OSNotifyRecord[]>([])
   const theme = useOSTheme()
 
   // Keep visibleRef in sync; use this instead of setVisible directly
@@ -47,6 +64,8 @@ export function JOSNotificationProvider({ children }: { children: ReactNode }) {
   const dismiss = useCallback((id: string) => {
     applyVisible(prev => prev.filter(n => n.id !== id))
   }, [applyVisible])
+
+  const clearAll = useCallback(() => setRecent([]), [])
 
   // Drain queue into visible when slots are free
   useEffect(() => {
@@ -70,14 +89,22 @@ export function JOSNotificationProvider({ children }: { children: ReactNode }) {
   }, [visible, dismiss])
 
   const notify = useCallback((config: OSNotifyConfig) => {
-    const entry: NotifEntry = { ...config, id: `notif-${notifIdRef.current++}` }
+    const id    = `notif-${notifIdRef.current++}`
+    const entry: NotifEntry = { ...config, id }
+
     if (visibleRef.current.length < MAX_VISIBLE) {
-      // Update visibleRef immediately so rapid successive calls see the correct count
       visibleRef.current = [...visibleRef.current, entry]
       setVisible(prev => [...prev, entry])
     } else {
       setQueue(q => [...q, entry])
     }
+
+    const d = new Date()
+    const ts = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    setRecent(prev => [
+      { id, title: config.title, body: config.body, icon: config.icon, timestamp: ts },
+      ...prev,
+    ].slice(0, MAX_RECENT))
   }, [])
 
   const stack = (
@@ -100,7 +127,7 @@ export function JOSNotificationProvider({ children }: { children: ReactNode }) {
   )
 
   return (
-    <OSNotifyContext.Provider value={{ notify }}>
+    <OSNotifyContext.Provider value={{ notify, recent, clearAll }}>
       {children}
       {createPortal(stack, document.body)}
     </OSNotifyContext.Provider>
