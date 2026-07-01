@@ -32,20 +32,30 @@ export function JOSNotificationProvider({ children }: { children: ReactNode }) {
   const notifIdRef = useRef(1)
   const [queue,   setQueue]   = useState<NotifEntry[]>([])
   const [visible, setVisible] = useState<NotifEntry[]>([])
+  const visibleRef = useRef<NotifEntry[]>([])
   const theme = useOSTheme()
 
-  const dismiss = useCallback((id: string) => {
-    setVisible(prev => prev.filter(n => n.id !== id))
+  // Keep visibleRef in sync; use this instead of setVisible directly
+  const applyVisible = useCallback((updater: (prev: NotifEntry[]) => NotifEntry[]) => {
+    setVisible(prev => {
+      const next = updater(prev)
+      visibleRef.current = next
+      return next
+    })
   }, [])
+
+  const dismiss = useCallback((id: string) => {
+    applyVisible(prev => prev.filter(n => n.id !== id))
+  }, [applyVisible])
 
   // Drain queue into visible when slots are free
   useEffect(() => {
     if (queue.length > 0 && visible.length < MAX_VISIBLE) {
       const take = Math.min(queue.length, MAX_VISIBLE - visible.length)
-      setVisible(prev => [...prev, ...queue.slice(0, take)])
+      applyVisible(prev => [...prev, ...queue.slice(0, take)])
       setQueue(prev => prev.slice(take))
     }
-  }, [queue, visible.length])
+  }, [queue, visible.length, applyVisible])
 
   // Auto-dismiss
   useEffect(() => {
@@ -61,12 +71,13 @@ export function JOSNotificationProvider({ children }: { children: ReactNode }) {
 
   const notify = useCallback((config: OSNotifyConfig) => {
     const entry: NotifEntry = { ...config, id: `notif-${notifIdRef.current++}` }
-    setVisible(prev => {
-      if (prev.length < MAX_VISIBLE) return [...prev, entry]
-      // queue it
+    if (visibleRef.current.length < MAX_VISIBLE) {
+      // Update visibleRef immediately so rapid successive calls see the correct count
+      visibleRef.current = [...visibleRef.current, entry]
+      setVisible(prev => [...prev, entry])
+    } else {
       setQueue(q => [...q, entry])
-      return prev
-    })
+    }
   }, [])
 
   const stack = (

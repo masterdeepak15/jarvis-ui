@@ -655,11 +655,11 @@
 
 .j-os-taskmanager__table td {
   padding: 6px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--os-border);
   white-space: nowrap;
 }
 
-.j-os-taskmanager__table tbody tr:hover { background: rgba(255,255,255,0.04); }
+.j-os-taskmanager__table tbody tr:hover { background: var(--os-surface-alt); }
 
 .j-os-tm-bar {
   display: flex;
@@ -683,8 +683,8 @@
   transition: width 0.3s;
 }
 
-.j-os-tm-bar__fill--warn   { background: #febc2e; }
-.j-os-tm-bar__fill--danger { background: #ff5f57; }
+.j-os-tm-bar__fill--warn   { background: var(--j-warn); }
+.j-os-tm-bar__fill--danger { background: var(--j-err); }
 .j-os-tm-bar__label { font-size: 11px; color: var(--os-text-muted); min-width: 36px; text-align: right; }
 
 .j-os-tm-status {
@@ -700,9 +700,9 @@
   border-radius: 50%;
 }
 
-.j-os-tm-status--running   .j-os-tm-status__dot { background: #28c840; }
-.j-os-tm-status--suspended .j-os-tm-status__dot { background: #febc2e; }
-.j-os-tm-status--stopped   .j-os-tm-status__dot { background: #ff5f57; }
+.j-os-tm-status--running   .j-os-tm-status__dot { background: var(--j-ok); }
+.j-os-tm-status--suspended .j-os-tm-status__dot { background: var(--j-warn); }
+.j-os-tm-status--stopped   .j-os-tm-status__dot { background: var(--j-err); }
 
 .j-os-tm-kill {
   padding: 2px 8px;
