@@ -1,11 +1,11 @@
 ---
 name: jarvis-ui-react
-description: Use this skill whenever working with @masterdeepak15/jarvis-ui — the HUD-style React component library. Trigger on any mention of JButton, JInput, JModal, JNodeGraph, JTable, JPagination, JAlert, JFormField, JThemeProvider, JHudBar, JRadialMenu, JCommandPalette, JBootScreen, JSparkline, JGaugeChart, PageShield, JDragWidget, JHudClock, JArcReactor, JHeatmap, JActivityFeed, JKPITicker, JHudCanvas, or any other J-prefixed component. Also trigger when user says "jarvis ui react", "jarvis theme", "HUD component", "tactical UI", "sci-fi UI", "shield HUD", "movies layout", "rainmeter", "widget canvas", "floating widget", or wants to add/fix/use any component from the React library @masterdeepak15/jarvis-ui.
+description: Use this skill whenever working with @masterdeepak15/jarvis-ui — the HUD-style React component library. Trigger on any mention of JButton, JInput, JModal, JNodeGraph, JTable, JPagination, JAlert, JFormField, JThemeProvider, JHudBar, JRadialMenu, JCommandPalette, JBootScreen, JSparkline, JGaugeChart, PageShield, JDragWidget, JHudClock, JArcReactor, JHeatmap, JActivityFeed, JKPITicker, JHudCanvas, JDesktop, JWindow, JWindowManager, JTaskbar, JStartMenu, JDock, JMenuBar, JOSNotification, JFileExplorer, JTaskManager, JControlPanel, JOSThemeProvider, or any other J-prefixed component. Also trigger when user says "jarvis ui react", "jarvis theme", "HUD component", "tactical UI", "sci-fi UI", "shield HUD", "movies layout", "rainmeter", "widget canvas", "floating widget", "OS shell", "desktop UI", "draggable window", "file explorer", "task manager", "control panel", or wants to add/fix/use any component from the React library @masterdeepak15/jarvis-ui.
 ---
 
 # JARVIS UI — Component Skill
 
-HUD-style React component library with 50+ components. Sci-fi / military aesthetic with dark themes, clip-path polygons, animated SVG, and CSS custom properties.
+HUD-style React component library with 60+ components. Sci-fi / military aesthetic with dark themes, clip-path polygons, animated SVG, and CSS custom properties. Now includes a full **OS Shell Kit** — Windows 11 / macOS themed desktop UI with draggable windows, taskbar, dock, and pre-built app shells.
 
 **Live Demo:** https://jarvis-ui-docs.vercel.app/
 **npm:** `@masterdeepak15/jarvis-ui`
@@ -533,6 +533,63 @@ Read the reference file for the component you need. Each file has props, use cas
 
 ---
 
+## OS Shell Kit
+
+Build web UIs that look like a desktop OS — draggable/resizable windows, taskbar or dock, desktop icon grid, and pre-built app shells. See full reference: `references/JOSShell.md`
+
+### Quick Start
+
+```tsx
+import { JDesktop, JFileExplorer, JTaskManager, JControlPanel } from '@masterdeepak15/jarvis-ui'
+
+const apps = [
+  { id: 'files',  icon: '📁', label: 'Files',        component: <JFileExplorer tree={myTree} /> },
+  { id: 'tasks',  icon: '📊', label: 'Task Manager', component: <JTaskManager processes={procs} onKill={handleKill} /> },
+  { id: 'settings', icon: '⚙️', label: 'Settings',  component: <JControlPanel sections={sections} /> },
+]
+
+<div style={{ width: '100vw', height: '100vh' }}>
+  <JDesktop theme="windows11" apps={apps} />   {/* or theme="macos" */}
+</div>
+```
+
+### Key Components
+
+| Component | Purpose |
+|---|---|
+| `JDesktop` | All-in-one desktop — wraps JOSThemeProvider + JWindowManager internally |
+| `JWindowManager` + `useWindowManager()` | Window state context — open, close, minimize, maximize, focus |
+| `JWindow` | Draggable/resizable window frame (pointer capture, 8 resize handles) |
+| `JTaskbar` + `JStartMenu` | Windows 11 bottom bar + start menu flyout |
+| `JDock` + `JMenuBar` | macOS dock (bottom center) + menu bar (top) |
+| `JOSNotificationProvider` + `useOSNotify()` | Portal-based toast stack, theme-aware position |
+| `JFileExplorer` | Two-pane tree browser — you supply the data |
+| `JTaskManager` | Sortable process table with CPU/mem bars + kill button |
+| `JControlPanel` | Icon grid + search filter + settings content pane |
+
+### Themes
+
+- `theme="windows11"` — taskbar bottom, Win11 controls (right), title bar 32px
+- `theme="macos"` — menu bar top, dock bottom center, traffic lights (left), title bar 28px
+
+### Notifications
+
+```tsx
+<JOSNotificationProvider>
+  <JDesktop ... />
+</JOSNotificationProvider>
+
+// anywhere inside:
+const { notify } = useOSNotify()
+notify({ title: 'Saved', body: 'report.pdf', icon: '✅', duration: 4000 })
+```
+
+### Compact / Responsive Mode
+
+Below `compactBreakpoint` (default 900px) all windows auto-maximize and switch via taskbar/dock. Customize: `<JDesktop compactBreakpoint={700} ... />`
+
+---
+
 ## TypeScript Types Quick Reference
 
 ```tsx
@@ -553,5 +610,13 @@ import type {
   JActivityFeedItem,// { id, time?, level?, message, source? }
   JKPITickerItem,   // { label, value, delta?, trend? }
   JHeatmapCell,     // { value, label?, tooltip? }
+  // OS Shell Kit
+  WindowState,      // { id, appId, title, icon?, x, y, width, height, minimized, maximized, zIndex, content }
+  OpenWindowConfig, // { appId, title, icon?, width?, height?, content }
+  JDesktopApp,      // { id, icon, label, component, defaultWidth?, defaultHeight? }
+  OSNotifyConfig,   // { title, body?, icon?, duration? }
+  JFileNode,        // { id, name, type: 'file'|'folder', icon?, children?, meta? }
+  JProcess,         // { pid, name, cpu, memory, status: 'running'|'suspended'|'stopped' }
+  JControlSection,  // { id, icon, label, component }
 } from '@masterdeepak15/jarvis-ui'
 ```
