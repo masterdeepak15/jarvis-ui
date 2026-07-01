@@ -1,1 +1,1 @@
-{"version":3,"file":"JWindow.d.ts","sourceRoot":"","sources":["../../../../src/components/os/shell/JWindow.tsx"],"names":[],"mappings":"AASA,MAAM,WAAW,YAAY;IAC3B,EAAE,EAAE,MAAM,CAAA;CACX;AAED,wBAAgB,OAAO,CAAC,EAAE,EAAE,EAAE,EAAE,YAAY,sCA4H3C"}
+{"version":3,"file":"JWindow.d.ts","sourceRoot":"","sources":["../../../../src/components/os/shell/JWindow.tsx"],"names":[],"mappings":"AASA,MAAM,WAAW,YAAY;IAC3B,EAAE,EAAE,MAAM,CAAA;CACX;AAED,wBAAgB,OAAO,CAAC,EAAE,EAAE,EAAE,EAAE,YAAY,sCA8H3C"}

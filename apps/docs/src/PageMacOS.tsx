@@ -190,8 +190,13 @@ const macApps: JDesktopApp[] = [
 
 const WALLPAPER = 'linear-gradient(160deg, #0e3460 0%, #1a5276 25%, #0b3d5e 50%, #1c2833 100%)'
 
+// Dock wrapper height: dock is 64px + 8px gap = 72px; add 8px buffer = 80px total
+// We slide it down by (80 - 4)px so only a 4px hover strip is visible at the bottom
+const DOCK_ZONE_H = 80
+
 function MacDesktopInner() {
   const { windows, openWindow, setDesktopSize } = useWindowManager()
+  const [dockVisible, setDockVisible] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -234,13 +239,16 @@ function MacDesktopInner() {
   ]
 
   return (
-    <div ref={ref} style={{ position: 'relative', width: '100%', height: '100%', background: WALLPAPER, overflow: 'hidden' }}>
-      {/* Menu bar */}
+    // position:absolute inset:0 — anchors to parent boundaries directly, no height:100% chain
+    <div ref={ref} style={{ position: 'absolute', inset: 0, background: WALLPAPER, overflow: 'hidden' }}>
+
+      {/* Menu bar — fixed 24px strip at top */}
       <JMenuBar appName="Finder" menus={menus} />
 
-      {/* Desktop area — between menu bar (28px) and dock (72px) */}
-      <div style={{ position: 'absolute', top: 28, bottom: 72, left: 0, right: 0 }}>
-        {/* Desktop icons — top right, vertical column */}
+      {/* Desktop area — below menu bar; extends to bottom since dock auto-hides over windows */}
+      <div style={{ position: 'absolute', top: 28, left: 0, right: 0, bottom: 0 }}>
+
+        {/* Desktop icons — top-right vertical column */}
         <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
           {macApps.map(app => (
             <div key={app.id} onDoubleClick={() => openApp(app)}
@@ -259,8 +267,25 @@ function MacDesktopInner() {
         {windows.filter(w => !w.minimized).map(w => <JWindow key={w.id} id={w.id} />)}
       </div>
 
-      {/* Dock */}
-      <JDock apps={macApps} />
+      {/* Dock auto-hide zone — slides down leaving a 4px hover strip at the screen bottom.
+          Moving mouse into that strip reveals the dock; leaving hides it again. */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: DOCK_ZONE_H,
+          zIndex: 1001,
+          transform: dockVisible ? 'translateY(0)' : `translateY(${DOCK_ZONE_H - 4}px)`,
+          transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}
+        onMouseEnter={() => setDockVisible(true)}
+        onMouseLeave={() => setDockVisible(false)}
+      >
+        {/* JDock uses position:absolute bottom:8px within this container */}
+        <JDock apps={macApps} />
+      </div>
     </div>
   )
 }

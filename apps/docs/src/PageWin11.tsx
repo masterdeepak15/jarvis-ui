@@ -146,7 +146,7 @@ function NotifyPane() {
     <div style={paneStyle}>
       <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Notifications &amp; Demo</div>
       <div style={{ marginBottom: 16, fontSize: 12, color: 'var(--os-text-muted)' }}>
-        Click the button to send a Windows 11 toast notification to the corner of the screen.
+        Click the button to send a Windows 11 toast notification. Click the taskbar clock/tray to open the Notification Center.
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {messages.map((m, i) => (
@@ -187,7 +187,7 @@ const win11Apps: JDesktopApp[] = [
   },
 ]
 
-// ─── desktop content ─────────────────────────────────────────────────────────
+// ─── desktop ─────────────────────────────────────────────────────────────────
 
 const WALLPAPER = 'linear-gradient(135deg, #0f1b2d 0%, #1a1040 35%, #0d2137 65%, #0a1520 100%)'
 
@@ -210,8 +210,11 @@ function Win11DesktopInner() {
   }, [openWindow])
 
   return (
-    <div ref={ref} style={{ position: 'relative', width: '100%', height: '100%', background: WALLPAPER, overflow: 'hidden' }}>
-      {/* Desktop icons — top-left grid */}
+    // position:absolute inset:0 — fills parent exactly (avoids height:100% chain dependency)
+    // JWindow.tsx handles maximize bounds via bottom:var(--os-taskbar-h) from the Windows11 CSS theme tokens
+    <div ref={ref} style={{ position: 'absolute', inset: 0, background: WALLPAPER, overflow: 'hidden' }}>
+
+      {/* Desktop icons — top-left grid, above taskbar area */}
       <div style={{ position: 'absolute', top: 24, left: 24, display: 'grid', gridTemplateColumns: 'repeat(3, 80px)', gap: 8 }}>
         {win11Apps.map(app => (
           <div key={app.id} onDoubleClick={() => openApp(app)}
@@ -226,10 +229,10 @@ function Win11DesktopInner() {
         ))}
       </div>
 
-      {/* Open windows */}
+      {/* Open windows — maximized uses bottom:var(--os-taskbar-h) via JWindow to stop at the taskbar */}
       {windows.filter(w => !w.minimized).map(w => <JWindow key={w.id} id={w.id} />)}
 
-      {/* Taskbar (centered, Windows 11 style) */}
+      {/* Taskbar — always visible at the bottom */}
       <JTaskbar apps={win11Apps} />
     </div>
   )
