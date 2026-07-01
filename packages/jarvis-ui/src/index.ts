@@ -3,6 +3,7 @@ import './styles/jarvis-theme.css'
 import './styles/jarvis-ui.css'
 import './styles/jarvis-charts.css'
 import './styles/jarvis-maps.css'
+import './styles/jarvis-os.css'
 
 // Theme system
 export type { JarvisTheme, JThemePreset } from './theme/JarvisTheme'
@@ -162,10 +163,17 @@ export type { NType, EdgeStyle, NodeDef, EdgeDef, JNodeGraphProps } from './comp
 export { JNodeGraph }                                                from './components/ui/JNodeGraph'
 
 // Components — OS shell (Windows 11 / macOS desktop)
+export type { OSTheme }                            from './components/os/shell/JOSThemeProvider'
+export { JOSThemeProvider, useOSTheme }            from './components/os/shell/JOSThemeProvider'
 export type { JDesktopApp, JDesktopProps }         from './components/os/shell/JDesktop'
 export { JDesktop }                                from './components/os/shell/JDesktop'
 export type { WindowState, OpenWindowConfig, WindowManagerContextValue, JWindowManagerProps } from './components/os/shell/JWindowManager'
 export { JWindowManager, useWindowManager }        from './components/os/shell/JWindowManager'
+export type { JWindowProps }                       from './components/os/shell/JWindow'
+export { JWindow }                                 from './components/os/shell/JWindow'
 export type { JStartMenuProps }                    from './components/os/windows/JStartMenu'
 export { JStartMenu }                              from './components/os/windows/JStartMenu'
 export { JTaskbar }                                from './components/os/windows/JTaskbar'
+export { JDock }                                   from './components/os/macos/JDock'
+export type { JMenuBarMenu, JMenuBarProps }        from './components/os/macos/JMenuBar'
+export { JMenuBar }                                from './components/os/macos/JMenuBar'

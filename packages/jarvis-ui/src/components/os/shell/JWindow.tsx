@@ -16,8 +16,10 @@ export function JWindow({ id }: JWindowProps) {
   const theme = useOSTheme()
   const titlebarRef = useRef<HTMLDivElement>(null)
 
-  const win = windows.find(w => w.id === id)
-  if (!win || win.minimized) return null
+  const winMaybe = windows.find(w => w.id === id)
+  if (!winMaybe || winMaybe.minimized) return null
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const win = winMaybe!
 
   const focused   = focusedId === id
   const isWindows = theme === 'windows11'
