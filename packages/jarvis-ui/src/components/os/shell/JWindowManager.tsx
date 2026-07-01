@@ -86,6 +86,7 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
   const windowsRef = useRef<WindowState[]>([])
   const [focusedId,   setFocusedId] = useState<string | null>(null)
   const [desktopSize, setDesktopSt] = useState({ w: 0, h: 0 })
+  const desktopSizeRef = useRef({ w: 0, h: 0 })
 
   const compactMode = desktopSize.w > 0 && desktopSize.w < compactBreakpoint
 
@@ -99,6 +100,7 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
   }, [])
 
   const setDesktopSize = useCallback((w: number, h: number) => {
+    desktopSizeRef.current = { w, h }
     setDesktopSt({ w, h })
     applyWindows(prev => prev.map(win => ({
       ...win,
@@ -118,10 +120,10 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
     }
     const id = genId()
     applyWindows(prev => {
-      const { x, y } = cascadePos(prev, desktopSize.w, desktopSize.h)
+      const { x, y } = cascadePos(prev, desktopSizeRef.current.w, desktopSizeRef.current.h)
       const w = config.width  ?? 640
       const h = config.height ?? 420
-      const clamped = clampWindow(x, y, w, h, desktopSize.w, desktopSize.h)
+      const clamped = clampWindow(x, y, w, h, desktopSizeRef.current.w, desktopSizeRef.current.h)
       const win: WindowState = {
         id, appId: config.appId, title: config.title, icon: config.icon,
         ...clamped,
@@ -133,7 +135,7 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
     })
     setFocusedId(id)
     return id
-  }, [desktopSize, applyWindows])
+  }, [applyWindows])
 
   const closeWindow = useCallback((id: string) => {
     applyWindows(prev => prev.filter(w => w.id !== id))
@@ -162,18 +164,18 @@ export function JWindowManager({ compactBreakpoint = 900, children }: JWindowMan
   const moveWindow = useCallback((id: string, x: number, y: number) => {
     applyWindows(prev => prev.map(w => {
       if (w.id !== id) return w
-      const clamped = clampWindow(x, y, w.width, w.height, desktopSize.w, desktopSize.h)
+      const clamped = clampWindow(x, y, w.width, w.height, desktopSizeRef.current.w, desktopSizeRef.current.h)
       return { ...w, ...clamped }
     }))
-  }, [desktopSize, applyWindows])
+  }, [applyWindows])
 
   const resizeWindow = useCallback((id: string, nw: number, nh: number) => {
     applyWindows(prev => prev.map(w => {
       if (w.id !== id) return w
-      const clamped = clampWindow(w.x, w.y, nw, nh, desktopSize.w, desktopSize.h)
+      const clamped = clampWindow(w.x, w.y, nw, nh, desktopSizeRef.current.w, desktopSizeRef.current.h)
       return { ...w, ...clamped }
     }))
-  }, [desktopSize, applyWindows])
+  }, [applyWindows])
 
   const value: WindowManagerContextValue = {
     windows, focusedId, compactMode, desktopSize,
