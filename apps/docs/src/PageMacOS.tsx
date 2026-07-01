@@ -196,7 +196,9 @@ const DOCK_ZONE_H = 80
 
 function MacDesktopInner() {
   const { windows, openWindow, setDesktopSize } = useWindowManager()
+  const [autoHide, setAutoHide]       = useState(false)   // default: dock always visible
   const [dockVisible, setDockVisible] = useState(true)
+  const [ctxMenu, setCtxMenu]         = useState<{ x: number; y: number } | null>(null)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -238,15 +240,27 @@ function MacDesktopInner() {
     },
   ]
 
+  // When auto-hide is turned on, dock starts hidden until hovered
+  const dockTranslate = (!autoHide || dockVisible)
+    ? 'translateY(0)'
+    : `translateY(${DOCK_ZONE_H - 16}px)`
+
   return (
     // position:absolute inset:0 — anchors to parent boundaries directly, no height:100% chain
-    <div ref={ref} style={{ position: 'absolute', inset: 0, background: WALLPAPER, overflow: 'hidden' }}>
+    <div
+      ref={ref}
+      style={{ position: 'absolute', inset: 0, background: WALLPAPER, overflow: 'hidden' }}
+      onClick={() => ctxMenu && setCtxMenu(null)}
+    >
 
       {/* Menu bar — fixed 24px strip at top */}
       <JMenuBar appName="Finder" menus={menus} />
 
-      {/* Desktop area — below menu bar; extends to bottom since dock auto-hides over windows */}
-      <div style={{ position: 'absolute', top: 28, left: 0, right: 0, bottom: 0 }}>
+      {/* Desktop area — right-click here to open context menu */}
+      <div
+        style={{ position: 'absolute', top: 28, left: 0, right: 0, bottom: 0 }}
+        onContextMenu={e => { e.preventDefault(); setCtxMenu({ x: e.clientX, y: e.clientY }) }}
+      >
 
         {/* Desktop icons — top-right vertical column */}
         <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
@@ -267,8 +281,7 @@ function MacDesktopInner() {
         {windows.filter(w => !w.minimized).map(w => <JWindow key={w.id} id={w.id} />)}
       </div>
 
-      {/* Dock auto-hide zone — slides down leaving a 4px hover strip at the screen bottom.
-          Moving mouse into that strip reveals the dock; leaving hides it again. */}
+      {/* Dock zone — always visible when autoHide=false; slides away when autoHide=true */}
       <div
         style={{
           position: 'absolute',
@@ -277,15 +290,75 @@ function MacDesktopInner() {
           right: 0,
           height: DOCK_ZONE_H,
           zIndex: 1001,
-          transform: dockVisible ? 'translateY(0)' : `translateY(${DOCK_ZONE_H - 16}px)`,
+          transform: dockTranslate,
           transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
         onMouseEnter={() => setDockVisible(true)}
         onMouseLeave={() => setDockVisible(false)}
       >
-        {/* JDock uses position:absolute bottom:8px within this container */}
         <JDock apps={macApps} />
       </div>
+
+      {/* Right-click context menu */}
+      {ctxMenu && (
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            position: 'absolute',
+            top: ctxMenu.y,
+            left: ctxMenu.x,
+            zIndex: 9000,
+            background: 'var(--os-surface)',
+            border: '1px solid var(--os-border)',
+            borderRadius: 'var(--os-radius)',
+            backdropFilter: 'var(--os-backdrop)',
+            boxShadow: 'var(--os-shadow)',
+            minWidth: 220,
+            padding: '4px 0',
+            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+            fontSize: 13,
+            color: 'var(--os-text)',
+            userSelect: 'none',
+          }}
+        >
+          {/* Section label */}
+          <div style={{ padding: '4px 14px 6px', fontSize: 11, color: 'var(--os-text-muted)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+            Dock &amp; Menu Bar
+          </div>
+          <div style={{ height: 1, background: 'var(--os-border)', margin: '0 0 4px' }} />
+
+          {/* Auto-hide toggle row */}
+          <button
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              width: '100%', padding: '7px 14px',
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              color: 'var(--os-text)', fontSize: 13,
+              fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+              textAlign: 'left',
+            }}
+            onMouseOver={e => (e.currentTarget.style.background = 'var(--os-accent)')}
+            onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+            onClick={() => {
+              const next = !autoHide
+              setAutoHide(next)
+              if (!next) setDockVisible(true)   // turning off auto-hide → show dock
+              setCtxMenu(null)
+            }}
+          >
+            <span style={{
+              width: 16, height: 16, borderRadius: 4,
+              background: autoHide ? 'var(--os-accent)' : 'transparent',
+              border: `1.5px solid ${autoHide ? 'var(--os-accent)' : 'var(--os-text-muted)'}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 11, color: '#fff', flexShrink: 0,
+            }}>
+              {autoHide ? '✓' : ''}
+            </span>
+            Automatically hide and show the Dock
+          </button>
+        </div>
+      )}
     </div>
   )
 }
