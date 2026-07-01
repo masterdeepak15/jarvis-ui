@@ -623,3 +623,97 @@
 .j-os-pane-item--active { background: rgba(255,255,255,0.14); }
 .j-os-pane-item__icon   { font-size: 28px; line-height: 1; }
 .j-os-pane-item__name   { font-size: 11px; color: var(--os-text); word-break: break-word; }
+
+/* Task Manager */
+.j-os-taskmanager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: var(--os-font);
+  color: var(--os-text);
+  background: var(--os-bg);
+}
+
+.j-os-taskmanager__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.j-os-taskmanager__table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--os-border);
+  color: var(--os-text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.j-os-taskmanager__table th:hover { color: var(--os-text); }
+
+.j-os-taskmanager__table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  white-space: nowrap;
+}
+
+.j-os-taskmanager__table tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+.j-os-tm-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 100px;
+}
+
+.j-os-tm-bar__track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.10);
+  overflow: hidden;
+}
+
+.j-os-tm-bar__fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--os-accent);
+  transition: width 0.3s;
+}
+
+.j-os-tm-bar__fill--warn   { background: #febc2e; }
+.j-os-tm-bar__fill--danger { background: #ff5f57; }
+.j-os-tm-bar__label { font-size: 11px; color: var(--os-text-muted); min-width: 36px; text-align: right; }
+
+.j-os-tm-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.j-os-tm-status__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.j-os-tm-status--running   .j-os-tm-status__dot { background: #28c840; }
+.j-os-tm-status--suspended .j-os-tm-status__dot { background: #febc2e; }
+.j-os-tm-status--stopped   .j-os-tm-status__dot { background: #ff5f57; }
+
+.j-os-tm-kill {
+  padding: 2px 8px;
+  background: transparent;
+  border: 1px solid rgba(255,95,87,0.4);
+  color: #ff5f57;
+  border-radius: var(--os-radius-sm);
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--os-font);
+  transition: background 0.1s;
+}
+
+.j-os-tm-kill:hover { background: rgba(255,95,87,0.15); }
