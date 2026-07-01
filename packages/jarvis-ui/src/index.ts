@@ -179,3 +179,11 @@ export type { JMenuBarMenu, JMenuBarProps }        from './components/os/macos/J
 export { JMenuBar }                                from './components/os/macos/JMenuBar'
 export type { OSNotifyConfig }                     from './components/os/shared/JOSNotification'
 export { JOSNotificationProvider, useOSNotify }    from './components/os/shared/JOSNotification'
+
+// Components — os apps
+export type { JFileNode, JFileExplorerProps }         from './components/os/apps/JFileExplorer'
+export { JFileExplorer }                              from './components/os/apps/JFileExplorer'
+export type { JProcess, JTaskManagerProps }           from './components/os/apps/JTaskManager'
+export { JTaskManager }                               from './components/os/apps/JTaskManager'
+export type { JControlSection, JControlPanelProps }   from './components/os/apps/JControlPanel'
+export { JControlPanel }                              from './components/os/apps/JControlPanel'
