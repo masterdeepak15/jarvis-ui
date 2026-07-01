@@ -1,6 +1,6 @@
 # JAlert
 
-Dismissable alert banner with 4 states (active/warning/error/success).
+Dismissible alert banner with 5 states (active/processing/warning/error/success).
 
 ## Import
 
@@ -14,30 +14,32 @@ import { JAlert } from '@masterdeepak15/jarvis-ui'
 |------|------|---------|-------------|
 | `state` | `JState` | `'active'` | Alert severity/type |
 | `title` | `string` | — | Bold header line |
-| `message` | `string` | — | Body text |
-| `dismissable` | `boolean` | `false` | Show × dismiss button |
+| `children` | `ReactNode` | — | Body content (text or JSX) |
+| `dismissible` | `boolean` | `false` | Show × dismiss button |
 | `onDismiss` | `() => void` | — | Called when dismissed |
-| `blink` | `boolean` | `false` | Blinking border animation |
+| `blink` | `boolean` | `false` | Slow blink animation on the whole alert |
 
-`JState`: `'active'` | `'warning'` | `'error'` | `'success'`
+`JState`: `'active'` | `'processing'` | `'warning'` | `'error'` | `'success'` | `'idle'`
+
+> **Note:** Body content goes in `children`, not a `message` prop. There is no `message` prop.
 
 ## Use Cases
 
 ### Four alert states
 
 ```tsx
-<JAlert state="active"  title="SYSTEM ACTIVE"   message="All sensors online and reporting." />
-<JAlert state="warning" title="LOW SIGNAL"       message="Radar signal degraded — 43% strength." />
-<JAlert state="error"   title="CONNECTION LOST"  message="CCTV-005 offline since 14:32 UTC." />
-<JAlert state="success" title="MISSION COMPLETE" message="All objectives confirmed." />
+<JAlert state="active"  title="SYSTEM ACTIVE">All sensors online and reporting.</JAlert>
+<JAlert state="warning" title="LOW SIGNAL">Radar signal degraded — 43% strength.</JAlert>
+<JAlert state="error"   title="CONNECTION LOST">CCTV-005 offline since 14:32 UTC.</JAlert>
+<JAlert state="success" title="MISSION COMPLETE">All objectives confirmed.</JAlert>
 ```
 
-### Dismissable alerts
+### Dismissible alerts
 
 ```tsx
 const [alerts, setAlerts] = useState([
-  { id: 1, state: 'error'   as JState, title: 'SENSOR FAILURE', message: 'CCTV-002 offline.' },
-  { id: 2, state: 'warning' as JState, title: 'LOW BATTERY',    message: 'PTZ-001 at 12%.' },
+  { id: 1, state: 'error'   as JState, title: 'SENSOR FAILURE', body: 'CCTV-002 offline.' },
+  { id: 2, state: 'warning' as JState, title: 'LOW BATTERY',    body: 'PTZ-001 at 12%.' },
 ])
 
 {alerts.map(a => (
@@ -45,10 +47,11 @@ const [alerts, setAlerts] = useState([
     key={a.id}
     state={a.state}
     title={a.title}
-    message={a.message}
-    dismissable
+    dismissible
     onDismiss={() => setAlerts(prev => prev.filter(x => x.id !== a.id))}
-  />
+  >
+    {a.body}
+  </JAlert>
 ))}
 ```
 
@@ -61,11 +64,12 @@ const [critical, setCritical] = useState(true)
   <JAlert
     state="error"
     title="INTRUSION DETECTED"
-    message="Zone 3 perimeter breach — unit dispatched."
     blink
-    dismissable
+    dismissible
     onDismiss={() => setCritical(false)}
-  />
+  >
+    Zone 3 perimeter breach — unit dispatched.
+  </JAlert>
 )}
 ```
 
@@ -73,11 +77,9 @@ const [critical, setCritical] = useState(true)
 
 ```tsx
 <JModal open={open} onClose={() => setOpen(false)} title="WARNING">
-  <JAlert
-    state="warning"
-    title="UNSAVED CHANGES"
-    message="You have unsaved changes. Closing will discard them."
-  />
+  <JAlert state="warning" title="UNSAVED CHANGES">
+    You have unsaved changes. Closing will discard them.
+  </JAlert>
   <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
     <JButton color="red"   onClick={discardAndClose}>DISCARD</JButton>
     <JButton color="ghost" onClick={() => setOpen(false)}>CANCEL</JButton>
@@ -96,14 +98,14 @@ function addAlert(msg: string) {
 
 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
   {log.map((msg, i) => (
-    <JAlert key={i} state="warning" title="ALERT" message={msg} />
+    <JAlert key={i} state="warning" title="ALERT">{msg}</JAlert>
   ))}
 </div>
 ```
 
 ## Notes
 
-- `state` maps to: `active` → cyan, `warning` → amber, `error` → red, `success` → green
-- `blink` animates the border — use sparingly for critical alerts only
-- `dismissable` requires wiring up `onDismiss` to remove the alert from state
+- `state` maps to: `active`/`processing` → cyan, `warning` → amber, `error` → red, `success` → green, `idle` → dim cyan
+- `blink` animates the whole alert slowly — use sparingly for critical alerts only
+- `dismissible` manages its own visibility internally; wire `onDismiss` to remove it from your list state
 - Stacks vertically naturally — render multiple alerts in a `flex-column` container

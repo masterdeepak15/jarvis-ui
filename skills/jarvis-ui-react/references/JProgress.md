@@ -1,6 +1,6 @@
 # JProgress
 
-Linear progress bar with optional segmented display.
+Linear progress bar in two variants: solid fill bar or animated tick segments.
 
 ## Import
 
@@ -12,93 +12,82 @@ import { JProgress } from '@masterdeepak15/jarvis-ui'
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `number` | — | Current value |
-| `max` | `number` | `100` | Maximum value |
-| `color` | `JColor` | `'cyan'` | Bar color |
-| `segments` | `number` | — | If set, renders segmented blocks instead of solid fill |
-| `showLabel` | `boolean` | `false` | Show percentage label |
+| `value` | `number` | `0` | Current value (0–100) |
+| `label` | `string` | — | Label shown above the bar |
+| `state` | `JState` | `'active'` | Color state |
+| `variant` | `'bar'` \| `'ticks'` | `'bar'` | Solid bar or segmented ticks |
+| `indeterminate` | `boolean` | `false` | Scanning animation (ignores `value`) |
+| `showPercent` | `boolean` | `true` | Show `value%` on the right of the label |
+| `total` | `number` | `16` | Number of tick segments (ticks variant only) |
+
+`JState`: `'active'` | `'warning'` | `'error'` | `'success'` | `'idle'` | `'processing'`
+
+> **Note:** There is no `max`, `color`, `segments`, or `showLabel` prop. Color comes from `state`; tick count comes from `total`.
 
 ## Use Cases
 
-### Basic health/capacity bar
+### Basic bar
 
 ```tsx
-<JProgress value={73} max={100} color="cyan" />
+<JProgress value={73} />
+<JProgress value={45} label="SIGNAL" />
 ```
 
-### Health bar with color thresholds
+### State-colored bars
 
 ```tsx
-function HealthBar({ health }: { health: number }) {
-  const color: JColor = health > 70 ? 'green' : health > 30 ? 'amber' : 'red'
-  return <JProgress value={health} max={100} color={color} />
+<JProgress value={85} label="CPU"    state="active"  />
+<JProgress value={67} label="MEMORY" state="warning" />
+<JProgress value={91} label="TEMP"   state="error"   />
+<JProgress value={32} label="DISK"   state="success" />
+```
+
+### Hide percent
+
+```tsx
+<JProgress value={73} label="LOAD" showPercent={false} />
+```
+
+### Indeterminate (loading)
+
+```tsx
+<JProgress indeterminate label="SCANNING" />
+```
+
+### Tick variant (discrete segments — ammo/battery/signal)
+
+```tsx
+// 16 ticks default
+<JProgress variant="ticks" value={75} label="AMMO" />
+
+// Custom tick count
+<JProgress variant="ticks" value={60} total={10} label="CHARGES" />
+```
+
+### Threshold-based state
+
+```tsx
+function SystemBar({ name, pct }: { name: string; pct: number }) {
+  const state: JState = pct > 80 ? 'error' : pct > 60 ? 'warning' : 'active'
+  return <JProgress value={pct} label={name} state={state} />
 }
 
-<HealthBar health={85} />  // green
-<HealthBar health={45} />  // amber
-<HealthBar health={12} />  // red
+<SystemBar name="CPU"    pct={45} />
+<SystemBar name="MEMORY" pct={82} />
+<SystemBar name="DISK"   pct={23} />
 ```
 
-### Segmented progress (ammo / battery / signal)
+### In a stat card
 
 ```tsx
-// Renders as discrete blocks — good for ammo count, battery level
-<JProgress value={7} max={10} segments={10} color="green" />
-<JProgress value={3} max={10} segments={10} color="red" />
-```
-
-### Progress with label
-
-```tsx
-<JProgress value={65} max={100} showLabel color="amber" />
-// shows "65%" alongside the bar
-```
-
-### In a data table cell
-
-```tsx
-// As a cell renderer for a "health" column
-function HealthCell({ value }: { value: number }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ width: 80 }}>
-        <JProgress
-          value={value}
-          max={100}
-          color={value > 70 ? 'green' : value > 30 ? 'amber' : 'red'}
-        />
-      </div>
-      <span style={{ fontSize: 8, color: 'var(--j-text-muted)' }}>{value}%</span>
-    </div>
-  )
-}
-```
-
-### Multiple systems overview
-
-```tsx
-const systems = [
-  { name: 'CPU',    value: 45, color: 'cyan'  },
-  { name: 'MEMORY', value: 82, color: 'amber' },
-  { name: 'DISK',   value: 23, color: 'green' },
-  { name: 'NET',    value: 91, color: 'red'   },
-]
-
-<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-  {systems.map(s => (
-    <div key={s.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-      <span style={{ fontSize: 8, color: 'var(--j-text-muted)', width: 60 }}>{s.name}</span>
-      <div style={{ flex: 1 }}>
-        <JProgress value={s.value} max={100} color={s.color as JColor} />
-      </div>
-      <span style={{ fontSize: 8, color: 'var(--j-text-muted)', width: 32 }}>{s.value}%</span>
-    </div>
-  ))}
-</div>
+<JStatCard title="NETWORK LOAD" value="67%">
+  <JProgress value={67} state="warning" showPercent={false} />
+</JStatCard>
 ```
 
 ## Notes
 
-- `value` must be between `0` and `max`
-- `segments` prop switches to block rendering — good for discrete quantities
-- Does not animate on value change by default — wrap in `useEffect` + `useState` for animated fill
+- `value` is always 0–100 (a percentage); the component does not accept raw values against a `max`
+- `variant="ticks"` renders `total` discrete segments — the active count is `Math.round(value / 100 * total)`
+- `state` drives color: `active` → cyan, `warning` → amber, `error` → red, `success` → green
+- `indeterminate` shows a scanning sweep animation and ignores `value`

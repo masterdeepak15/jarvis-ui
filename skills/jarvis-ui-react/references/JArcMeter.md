@@ -1,6 +1,6 @@
 # JArcMeter · JWaveform · JOrb
 
-HUD visualization components — animated SVG displays for dashboards.
+HUD visualization components — animated displays for dashboards.
 
 ## Import
 
@@ -12,36 +12,43 @@ import { JArcMeter, JWaveform, JOrb } from '@masterdeepak15/jarvis-ui'
 
 ## JArcMeter
 
-Animated SVG arc gauge — shows a value as a filled arc with needle or fill.
+Segmented arc-style level meter. Displays a value as a count of lit segments with wave-shaped heights.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `number` | — | Current value |
-| `max` | `number` | `100` | Maximum value |
-| `label` | `string` | — | Label below the arc |
-| `unit` | `string` | — | Unit suffix (e.g. `'%'`, `'km/h'`) |
-| `color` | `JColor` | `'cyan'` | Arc fill color |
-| `size` | `number` | `120` | Width/height in pixels |
-| `showValue` | `boolean` | `true` | Show value text inside arc |
+| `level` | `number` | — | Number of active segments (0 to `totalArcs`) |
+| `totalArcs` | `number` | `6` | Total number of segments |
+| `color` | `JColor` | `'cyan'` | Segment color |
+| `orientation` | `'horizontal'`\|`'vertical'` | `'horizontal'` | Layout direction |
+| `showLabel` | `boolean` | `false` | Show label above meter |
+| `label` | `string` | `'LEVEL'` | Label text |
+| `showValue` | `boolean` | `false` | Show `level / totalArcs` below meter |
+| `arcWidth` | `string` | `'8px'` | Width of each segment (horizontal) |
+| `arcGap` | `string` | `'3px'` | Gap between segments |
+
+> **Note:** The prop is `level` (not `value`) and `totalArcs` (not `max`). There is no `size` or `unit` prop.
 
 ### Examples
 
 ```tsx
-// Basic arc meter
-<JArcMeter value={73} max={100} label="SIGNAL" unit="%" color="cyan" />
+// Basic — 4 of 6 segments lit
+<JArcMeter level={4} totalArcs={6} />
+
+// With label and value readout
+<JArcMeter level={4} totalArcs={6} label="SIGNAL" showLabel showValue />
 
 // Multi-meter panel
 <div style={{ display: 'flex', gap: 24, justifyContent: 'center' }}>
-  <JArcMeter value={45} max={100} label="CPU"    unit="%" color="cyan"  />
-  <JArcMeter value={82} max={100} label="MEMORY" unit="%" color="amber" />
-  <JArcMeter value={23} max={100} label="DISK"   unit="%" color="green" />
-  <JArcMeter value={91} max={100} label="TEMP"   unit="°C" color="red" max={120} />
+  <JArcMeter level={8}  totalArcs={10} label="CPU"    showLabel color="cyan"  />
+  <JArcMeter level={9}  totalArcs={10} label="MEMORY" showLabel color="amber" />
+  <JArcMeter level={3}  totalArcs={10} label="DISK"   showLabel color="green" />
+  <JArcMeter level={10} totalArcs={10} label="TEMP"   showLabel color="red"   />
 </div>
 
-// Larger meter for featured metric
-<JArcMeter value={speed} max={500} label="VELOCITY" unit="km/h" size={200} color="cyan" />
+// Vertical orientation
+<JArcMeter level={5} totalArcs={8} orientation="vertical" color="cyan" />
 ```
 
 ---
@@ -79,35 +86,44 @@ Animated audio-style waveform bars.
 
 ## JOrb
 
-Pulsing orb with concentric glow rings — status indicator or decorative element.
+Large interactive AI-assistant orb with concentric animated rings, system name, state label, and a listening indicator dot.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `color` | `JColor` | `'cyan'` | Orb color |
-| `size` | `number` | `60` | Diameter in pixels |
-| `pulse` | `boolean` | `true` | Enable pulse animation |
-| `label` | `string` | — | Label below orb |
-| `rings` | `number` | `3` | Number of glow rings |
+| `systemName` | `string` | `'JARVIS'` | Text displayed in the center |
+| `size` | `string` | `'160px'` | Diameter — CSS string e.g. `'160px'`, `'10rem'` |
+| `state` | `JState` | `'active'` | Drives ring animation speed and state label |
+| `listening` | `boolean` | `false` | Lights up the bottom indicator dot |
+| `onClick` | `() => void` | — | Click handler |
+
+> **Note:** Props are `systemName` (not `label`), `size: string` (not `number`), `state` (not `pulse`/`rings`). There is no `color` prop — color is always the theme accent.
+
+### State behaviors
+
+| `state` | Ring speed | Center label |
+|---|---|---|
+| `active` | Medium | Online / Listening |
+| `processing` | Fast | Processing |
+| `idle` | Slow | Idle |
+| `warning` | Medium | Warning |
+| `error` | Medium | Error |
 
 ### Examples
 
 ```tsx
-// Status orbs
-<JOrb color="green" label="ONLINE"  />
-<JOrb color="amber" label="WARNING" />
-<JOrb color="red"   label="OFFLINE" pulse={false} />
+// Basic
+<JOrb systemName="JARVIS" state="active" />
 
-// Large featured orb
-<JOrb color="cyan" size={120} rings={4} label="SYSTEM ACTIVE" />
+// Processing with click handler
+<JOrb systemName="IRIS" state="processing" size="200px" onClick={handleActivate} />
 
-// Row of system status orbs
-<div style={{ display: 'flex', gap: 32, justifyContent: 'center' }}>
-  {systems.map(s => (
-    <JOrb key={s.name} color={s.color} label={s.name} size={50} />
-  ))}
-</div>
+// Listening mode
+<JOrb systemName="JARVIS" state="active" listening size="160px" />
+
+// Idle / standby
+<JOrb systemName="ARIA" state="idle" size="120px" />
 ```
 
 ---
@@ -120,17 +136,10 @@ Pulsing orb with concentric glow rings — status indicator or decorative elemen
     ▶ SYSTEM VITALS
   </div>
 
-  {/* Orbs for quick status */}
-  <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
-    <JOrb color="green" size={40} label="RADAR"   />
-    <JOrb color="amber" size={40} label="COMMS"   pulse />
-    <JOrb color="red"   size={40} label="SENSORS" pulse={false} />
-  </div>
-
   {/* Arc meters for key metrics */}
-  <div style={{ display: 'flex', gap: 16 }}>
-    <JArcMeter value={signal}  max={100} label="SIGNAL"  unit="%" color="cyan"  size={80} />
-    <JArcMeter value={battery} max={100} label="BATTERY" unit="%" color="green" size={80} />
+  <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
+    <JArcMeter level={9}  totalArcs={10} label="SIGNAL"  showLabel color="cyan"  />
+    <JArcMeter level={7}  totalArcs={10} label="BATTERY" showLabel color="green" />
   </div>
 
   {/* Waveform at bottom */}
@@ -140,7 +149,6 @@ Pulsing orb with concentric glow rings — status indicator or decorative elemen
 
 ## Notes
 
-- `JArcMeter`: value must be ≤ max; it does not clamp
+- `JArcMeter`: `level` must be ≤ `totalArcs`; the peak segment pulses
 - `JWaveform`: animation runs continuously using CSS keyframes — no data input needed
-- `JOrb`: `pulse={false}` stops the animation — use for offline/error states
-- All three are purely decorative/visual — no interaction handlers
+- `JOrb`: best used as a hero/centerpiece element; not for inline status indicators

@@ -1,152 +1,174 @@
 # JBarChart · JLineChart · JDonutChart · JRadarChart
 
-Chart components powered by Recharts with HUD styling.
+Pure-SVG chart components with HUD styling. **Not Recharts** — these are custom SVG renderers.
 
 ## Import
 
 ```tsx
 import { JBarChart, JLineChart, JDonutChart, JRadarChart } from '@masterdeepak15/jarvis-ui'
+import type { JChartPoint, JDonutSegment, JRadarAxis } from '@masterdeepak15/jarvis-ui'
 ```
+
+## Shared data types
+
+```tsx
+// Used by JBarChart and JLineChart
+interface JChartPoint { label: string; value: number }
+
+// Used by JDonutChart
+interface JDonutSegment { label: string; value: number; color?: string }
+
+// Used by JRadarChart
+interface JRadarAxis { label: string; value: number; max?: number }
+```
+
+> **Note:** There is no `dataKey` / `xKey` / `name` prop pattern. All charts use typed data structs above — not arbitrary object arrays. Charts are all **single-series** (no `lines[]` multi-series).
 
 ---
 
 ## JBarChart
 
-Vertical bar chart.
+Vertical or horizontal bar chart.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `data` | `object[]` | — | Array of data objects |
-| `dataKey` | `string` | — | Key for bar values |
-| `xKey` | `string` | — | Key for X-axis labels |
-| `color` | `string` | `'var(--j-accent)'` | Bar color (CSS value) |
-| `height` | `number` | `200` | Chart height in pixels |
+| `data` | `JChartPoint[]` | — | Bar data (`{label, value}`) |
+| `height` | `string` | `'220px'` | Chart height (CSS string) |
+| `colorVar` | `string` | `'--j-accent'` | CSS variable name for bar color |
+| `orientation` | `'vertical'`\|`'horizontal'` | `'vertical'` | Bar direction |
 | `showGrid` | `boolean` | `true` | Show grid lines |
+| `showAxisLabels` | `boolean` | `true` | Show axis value labels |
+| `showValues` | `boolean` | `false` | Show value above each bar |
+| `gridLines` | `number` | `4` | Number of grid lines |
 
 ### Examples
 
 ```tsx
-const data = [
-  { zone: 'ALPHA', units: 12 },
-  { zone: 'BRAVO', units: 8  },
-  { zone: 'CHARLIE', units: 15 },
-  { zone: 'DELTA', units: 6  },
+const zoneData: JChartPoint[] = [
+  { label: 'ALPHA',   value: 12 },
+  { label: 'BRAVO',   value: 8  },
+  { label: 'CHARLIE', value: 15 },
+  { label: 'DELTA',   value: 6  },
 ]
 
-<JBarChart data={data} dataKey="units" xKey="zone" height={200} />
-<JBarChart data={data} dataKey="units" xKey="zone" color="var(--j-amber)" />
+<JBarChart data={zoneData} />
+<JBarChart data={zoneData} colorVar="--j-warn" height="160px" />
+<JBarChart data={zoneData} orientation="horizontal" showValues />
 ```
 
 ---
 
 ## JLineChart
 
-Line / area chart with multiple series.
+Single-series line / area chart.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `data` | `object[]` | — | Array of data objects |
-| `lines` | `{ key: string; color: string; area?: boolean }[]` | — | Line series definitions |
-| `xKey` | `string` | — | Key for X-axis |
-| `height` | `number` | `200` | Chart height |
+| `data` | `JChartPoint[]` | — | Line data (`{label, value}`) |
+| `height` | `string` | `'200px'` | Chart height (CSS string) |
+| `colorVar` | `string` | `'--j-accent'` | CSS variable name for line color |
+| `showArea` | `boolean` | `false` | Fill area under the line |
+| `showDots` | `boolean` | `true` | Show data point dots |
+| `showAxisLabels` | `boolean` | `true` | Show axis labels |
 | `showGrid` | `boolean` | `true` | Show grid lines |
+| `gridLines` | `number` | `4` | Number of grid lines |
+
+> **Note:** Single-series only. There is no `lines[]`, `xKey`, or multi-series support.
 
 ### Examples
 
 ```tsx
-const timeData = [
-  { time: '00:00', signal: 72, noise: 18 },
-  { time: '04:00', signal: 68, noise: 22 },
-  { time: '08:00', signal: 85, noise: 14 },
-  { time: '12:00', signal: 91, noise: 9  },
-  { time: '16:00', signal: 78, noise: 17 },
-  { time: '20:00', signal: 65, noise: 24 },
+const signalData: JChartPoint[] = [
+  { label: '00:00', value: 72 },
+  { label: '04:00', value: 68 },
+  { label: '08:00', value: 85 },
+  { label: '12:00', value: 91 },
+  { label: '16:00', value: 78 },
+  { label: '20:00', value: 65 },
 ]
 
-// Single line
-<JLineChart
-  data={timeData}
-  xKey="time"
-  lines={[{ key: 'signal', color: 'var(--j-accent)' }]}
-/>
-
-// Multi-line with area fill
-<JLineChart
-  data={timeData}
-  xKey="time"
-  lines={[
-    { key: 'signal', color: 'var(--j-cyan)',  area: true },
-    { key: 'noise',  color: 'var(--j-amber)', area: false },
-  ]}
-  height={250}
-/>
+<JLineChart data={signalData} />
+<JLineChart data={signalData} showArea colorVar="--j-ok" />
+<JLineChart data={signalData} showDots={false} height="150px" />
 ```
 
 ---
 
 ## JDonutChart
 
-Donut / pie chart.
+Donut / pie chart with optional legend.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `data` | `{ name: string; value: number; color?: string }[]` | — | Slice data |
-| `height` | `number` | `200` | Chart height |
-| `innerRadius` | `number` | `60` | Inner radius (0 = pie, >0 = donut) |
-| `label` | `string` | — | Center label text |
+| `data` | `JDonutSegment[]` | — | Slice data (`{label, value, color?}`) |
+| `size` | `string` | `'160px'` | Chart diameter (CSS string) |
+| `thickness` | `number` | `20` | Ring thickness in SVG units |
+| `centerValue` | `string` | — | Large text in the center |
+| `centerLabel` | `string` | — | Small label below `centerValue` |
+| `showLegend` | `boolean` | `true` | Show label + % legend below chart |
+
+> **Note:** Props are `size` (not `height`), `centerValue`+`centerLabel` (not a single `label`), `data[].label` (not `.name`).
 
 ### Examples
 
 ```tsx
-const statusData = [
-  { name: 'ONLINE',  value: 42, color: 'var(--j-green)' },
-  { name: 'WARNING', value: 7,  color: 'var(--j-amber)' },
-  { name: 'ERROR',   value: 3,  color: 'var(--j-red)'   },
-  { name: 'OFFLINE', value: 8,  color: 'var(--j-text-muted)' },
+const statusData: JDonutSegment[] = [
+  { label: 'ONLINE',  value: 42, color: 'var(--j-ok)'        },
+  { label: 'WARNING', value: 7,  color: 'var(--j-warn)'      },
+  { label: 'ERROR',   value: 3,  color: 'var(--j-err)'       },
+  { label: 'OFFLINE', value: 8,  color: 'var(--j-text-muted)' },
 ]
 
-<JDonutChart data={statusData} label="60 UNITS" />
-<JDonutChart data={statusData} innerRadius={0} />  {/* pie chart */}
+<JDonutChart data={statusData} centerValue="60" centerLabel="UNITS" />
+<JDonutChart data={statusData} size="200px" showLegend={false} />
+<JDonutChart data={statusData} thickness={30} />  {/* fatter ring */}
 ```
 
 ---
 
 ## JRadarChart
 
-Radar / spider chart for multi-dimensional comparison.
+Single-series radar / spider chart. Each axis has its own value and optional max.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `data` | `object[]` | — | Data with `subject` key + metric keys |
-| `keys` | `string[]` | — | Metric keys to plot |
-| `colors` | `string[]` | — | Colors for each key |
-| `height` | `number` | `200` | Chart height |
+| `axes` | `JRadarAxis[]` | — | Axis data (`{label, value, max?}`) |
+| `size` | `string` | `'200px'` | Chart diameter (CSS string) |
+| `colorVar` | `string` | `'--j-accent'` | CSS variable name for polygon color |
+| `rings` | `number` | `4` | Number of web rings |
+| `showLabels` | `boolean` | `true` | Show axis labels |
+
+> **Note:** Single-series only. Props are `axes` (not `data`), no `keys[]` or `colors[]`. Each axis carries its own `value` and optional `max` (defaults to 100).
 
 ### Examples
 
 ```tsx
-const radarData = [
-  { subject: 'SIGNAL',   unitA: 80, unitB: 65 },
-  { subject: 'RANGE',    unitA: 60, unitB: 85 },
-  { subject: 'ACCURACY', unitA: 90, unitB: 70 },
-  { subject: 'SPEED',    unitA: 75, unitB: 90 },
-  { subject: 'STEALTH',  unitA: 55, unitB: 40 },
+const unitStats: JRadarAxis[] = [
+  { label: 'SIGNAL',   value: 80 },
+  { label: 'RANGE',    value: 60 },
+  { label: 'ACCURACY', value: 90 },
+  { label: 'SPEED',    value: 75 },
+  { label: 'STEALTH',  value: 55 },
 ]
 
-<JRadarChart
-  data={radarData}
-  keys={['unitA', 'unitB']}
-  colors={['var(--j-cyan)', 'var(--j-amber)']}
-  height={280}
-/>
+<JRadarChart axes={unitStats} />
+<JRadarChart axes={unitStats} colorVar="--j-warn" size="240px" />
+
+// Per-axis custom max
+const threatStats: JRadarAxis[] = [
+  { label: 'RANGE',  value: 12, max: 20  },
+  { label: 'SPEED',  value: 450, max: 600 },
+  { label: 'ARMOR',  value: 3,  max: 5   },
+]
+<JRadarChart axes={threatStats} />
 ```
 
 ---
@@ -157,29 +179,29 @@ const radarData = [
 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
   <JHudFrameCard style={{ padding: 14 }}>
     <div style={{ fontSize: 8, color: 'var(--j-accent)', marginBottom: 8 }}>SIGNAL HISTORY</div>
-    <JLineChart data={signalData} xKey="hour" lines={[{ key: 'strength', color: 'var(--j-accent)', area: true }]} />
+    <JLineChart data={signalData} showArea />
   </JHudFrameCard>
 
   <JHudFrameCard style={{ padding: 14 }}>
     <div style={{ fontSize: 8, color: 'var(--j-accent)', marginBottom: 8 }}>UNIT STATUS</div>
-    <JDonutChart data={statusData} label="60 UNITS" />
+    <JDonutChart data={statusData} centerValue="60" centerLabel="UNITS" />
   </JHudFrameCard>
 
   <JHudFrameCard style={{ padding: 14 }}>
     <div style={{ fontSize: 8, color: 'var(--j-accent)', marginBottom: 8 }}>ZONE ACTIVITY</div>
-    <JBarChart data={zoneData} dataKey="count" xKey="zone" />
+    <JBarChart data={zoneData} />
   </JHudFrameCard>
 
   <JHudFrameCard style={{ padding: 14 }}>
-    <div style={{ fontSize: 8, color: 'var(--j-accent)', marginBottom: 8 }}>UNIT COMPARISON</div>
-    <JRadarChart data={radarData} keys={['alpha','bravo']} colors={['var(--j-cyan)','var(--j-amber)']} />
+    <div style={{ fontSize: 8, color: 'var(--j-accent)', marginBottom: 8 }}>UNIT PROFILE</div>
+    <JRadarChart axes={unitStats} />
   </JHudFrameCard>
 </div>
 ```
 
 ## Notes
 
-- All charts use `var(--j-*)` CSS variables for colors — they update automatically on theme change
-- Data arrays must be stable references — memoize with `useMemo` for large datasets
-- Charts are Recharts under the hood — responsive by default
+- All charts use `colorVar` (a CSS variable **name** without `var()`) — e.g. `colorVar="--j-warn"` not `colorVar="var(--j-warn)"`
+- Charts auto-scale to their data range — no `min`/`max` prop needed (except `JRadarAxis.max` per-axis)
 - `JSparkline` is for micro trends with no axes; these charts are for labeled data with context
+- For multi-series line charts, use raw Recharts or render two `JLineChart` overlaid with `position: absolute`

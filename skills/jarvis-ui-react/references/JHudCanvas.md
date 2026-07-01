@@ -160,3 +160,16 @@ const [positions, setPositions] = useState<Record<string, {x:number,y:number}>>(
 - `snapToGrid` rounds drag positions to the nearest `gridSize` px increment.
 - Every widget is collapsible (▾/▸ button in title bar) to save screen space.
 - **Never use `JHudCanvas` inside a scrollable container** — it is designed for fixed-height viewports.
+
+## Known Limits
+
+**Widget overflow is silent.** `JHudCanvas` clips its content with `overflow: hidden`. If a widget's `x + width` exceeds the canvas width, or `y + height` exceeds the canvas height, the widget is **silently invisible** — it does not scroll, wrap, or throw an error. This is the most common cause of "widget disappeared" bugs.
+
+Before placing widgets, verify your layout fits:
+```
+// Widget at x=650, width=280 → rightmost pixel = 930
+// Canvas must be at least 930px wide or the widget clips
+```
+
+If you're using `height="100vh"` and placing widgets near the bottom, remember the canvas height changes with the viewport — use `onWidgetMove` to save positions and let users reposition.
+

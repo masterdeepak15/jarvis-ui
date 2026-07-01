@@ -1,4 +1,4 @@
-import { useState, useCallback, createContext, useContext } from 'react'
+import { useState, useCallback, useEffect, createContext, useContext } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { JState } from '../../theme/JarvisTokens'
 
@@ -66,6 +66,10 @@ export function JRadialMenu({
   const [isOpen,     setIsOpen]     = useState(_open ?? false)
   const [hoveredKey, setHoveredKey] = useState<string | null>(null)
   const [hoverLabel, setHoverLabel] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (_open !== undefined) setIsOpen(_open)
+  }, [_open])
 
   const register = useCallback<RegisterFn>((item) => {
     setItems(prev => prev.some(i => i.key === item.key) ? prev : [...prev, item])
