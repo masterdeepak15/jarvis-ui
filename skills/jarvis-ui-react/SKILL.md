@@ -5,343 +5,37 @@ description: Use this skill whenever working with @masterdeepak15/jarvis-ui — 
 
 # JARVIS UI — Component Skill
 
-HUD-style React component library with 60+ components. Sci-fi / military aesthetic with dark themes, clip-path polygons, animated SVG, and CSS custom properties. Now includes a full **OS Shell Kit** — Windows 11 / macOS themed desktop UI with draggable windows, taskbar, dock, and pre-built app shells.
+HUD-style React component library with 60+ components. Sci-fi / military aesthetic with dark themes, clip-path polygons, animated SVG, and CSS custom properties. Includes a full **OS Shell Kit** — Windows 11 / macOS themed desktop UI with draggable windows, taskbar, dock, and pre-built app shells.
 
 **Live Demo:** https://jarvis-ui-docs.vercel.app/
 **npm:** `@masterdeepak15/jarvis-ui`
 
 ---
 
-## 🎬 Layout Style — Ask First!
+## Layout Style — Ask First!
 
 When a **first-time user** sets up a new page or dashboard, **always ask** which layout style they prefer:
 
 ```
 "Which layout style do you want?"
 
-  A) TYPICAL  — Standard dashboard layout. Sidebar navigation, data tables,
-                 form panels, stat cards in a grid. Clean and information-dense.
-
-  B) MOVIES   — Cinematic HUD style. Inspired by SHIELD OS / Iron Man /
-                 Avengers interfaces. Concentric radar rings, rotating tick rings,
-                 hex grid overlays, target lock brackets, animated sweep —
-                 the full Rainmeter/sci-fi experience.
+  A) TYPICAL     — Sidebar navigation, data tables, stat cards. Clean, information-dense.
+  B) MOVIES/HUD  — SHIELD OS / Iron Man cinematic HUD. Floating widgets on a dark canvas.
+  C) WINDOWS 11  — Full desktop OS shell with taskbar, draggable windows.
+  D) macOS       — Full desktop OS shell with dock, menu bar, draggable windows.
 ```
 
-- **Typical** → use `JPageLayout` + standard component layout patterns.
-- **Movies / SHIELD** → use `JHudCanvas` as the root, place every component as an independent floating widget at explicit `(x, y)` coordinates. See all rules below.
+## Layout Guides
 
----
+Read the guide for the chosen style before writing any code:
 
-## 🎬 MOVIES UI — WIDGET-FIRST MENTAL MODEL (MANDATORY)
-
-> **Read every word of this section before writing a single line of Movies-mode UI.**
-> **These rules are non-negotiable. Violating them produces a page, not a HUD.**
-
----
-
-### The Core Mental Model: The Screen IS the Canvas
-
-In movie-style HUDs (Iron Man, SHIELD OS, JARVIS, Avengers Helicarrier), **there is no page**.
-There is only a **dark screen** with **floating, self-contained widgets** placed at precise pixel coordinates — exactly like a Rainmeter desktop skin or a fighter jet cockpit panel.
-
-Each component is not a "section of a page". It is an **instrument**. A clock is a clock instrument. A radar is a radar instrument. An arc meter is a power gauge instrument. They sit on the dark screen independently, separated by intentional dark space.
-
-**Fundamental shift from Typical → Movies:**
-
-| Typical Layout | Movies / HUD Layout |
-|---|---|
-| Components live inside a page flow | Components float on a canvas at absolute `(x, y)` |
-| Content stacks top-to-bottom | Widgets are scattered across the full viewport |
-| Sidebar + main content area | No sidebar. No main area. Just widgets on darkness. |
-| Scrollable page | Fixed viewport — everything visible at once, no scroll |
-| Components are content blocks | Components are **instruments on a cockpit panel** |
-| Width fills the container | Each widget has its own fixed natural width |
-| Top-level CSS `grid` / `flex` | `position: absolute` — every widget placed manually |
-| Navigation = sidebar | Navigation = `JRadialMenu` radial ring or bottom dock |
-
----
-
-### ❌ NEVER Do This in Movies Mode
-
-```tsx
-// ❌ WRONG — page flow thinking
-<div className="flex flex-col gap-4">
-  <JStatCard ... />
-  <JBarChart ... />
-  <JTable ... />
-</div>
-
-// ❌ WRONG — grid of widgets is still a page, not a HUD
-<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
-  <JArcMeter ... />
-  <JArcMeter ... />
-</div>
-
-// ❌ WRONG — wrapping everything in JPageLayout
-<JPageLayout sidebar={...}>
-  <MoviesDashboard />
-</JPageLayout>
-
-// ❌ WRONG — full-width components (except the KPI ticker bar)
-<JActivityFeed style={{ width: '100%' }} />
-```
-
----
-
-### ✅ ALWAYS Do This in Movies Mode
-
-**Every component = one widget = one floating instrument = one `JHudCanvas` entry.**
-
-Use `JHudCanvas` as the root. Give every widget an explicit `x`, `y`, and natural `width`.
-The canvas handles drag-to-reposition automatically — this is the Rainmeter philosophy.
-
-```tsx
-import { JHudCanvas, JHudClock, JArcReactor, JArcMeter,
-         JActivityFeed, JKPITicker, JDataRow } from '@masterdeepak15/jarvis-ui'
-
-export function MyHUDPage() {
-  return (
-    <>
-      {/* Full-screen dark canvas — widgets float on this */}
-      <JHudCanvas
-        height="100vh"
-        showGrid       // subtle dot grid — pure HUD aesthetic
-        snapToGrid     // optional: widgets snap to 20px grid
-        widgets={[
-
-          // ── TOP-LEFT ZONE — identity & time ──────────────────
-          {
-            id: 'clock',
-            x: 32, y: 28,
-            width: 160,
-            color: 'cyan',
-            title: 'SYSTEM CLOCK',
-            content: <JHudClock analog size={120} showDate />,
-          },
-
-          // ── LEFT COLUMN — system meters ───────────────────────
-          {
-            id: 'power',
-            x: 32, y: 220,
-            width: 160,
-            color: 'cyan',
-            title: 'ARC REACTOR',
-            content: <JArcReactor level={87} size={110} label="POWER" />,
-          },
-          {
-            id: 'meters',
-            x: 32, y: 400,
-            width: 200,
-            color: 'cyan',
-            title: 'SYSTEMS',
-            content: (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <JArcMeter level={91} label="SHIELDS" color="cyan" />
-                <JArcMeter level={67} label="ENGINES" color="green" />
-                <JArcMeter level={44} label="FUEL"    color="amber" />
-                <JArcMeter level={23} label="HULL"    color="red" />
-              </div>
-            ),
-          },
-
-          // ── CENTER ZONE — primary instrument (always largest) ─
-          {
-            id: 'radar',
-            x: 260, y: 28,
-            width: 340,
-            color: 'cyan',
-            title: 'TACTICAL RADAR',
-            content: <RadarWidget />,   // 280×280 canvas radar
-          },
-
-          // ── TOP-RIGHT ZONE — alerts & comms ──────────────────
-          {
-            id: 'alerts',
-            x: 640, y: 28,
-            width: 280,
-            color: 'amber',
-            title: 'SYSTEM ALERTS',
-            content: <JAlert state="warning" message="Sector 7 breach detected" />,
-          },
-
-          // ── RIGHT COLUMN — live data feed ─────────────────────
-          {
-            id: 'log',
-            x: 640, y: 120,
-            width: 280,
-            color: 'cyan',
-            title: 'ACTIVITY LOG',
-            content: <JActivityFeed items={logItems} maxRows={8} autoScroll />,
-          },
-          {
-            id: 'contacts',
-            x: 640, y: 380,
-            width: 280,
-            color: 'green',
-            title: 'CONTACTS',
-            content: (
-              <>
-                <JDataRow label="HOSTILE"  value="3" state="error" />
-                <JDataRow label="NEUTRAL"  value="5" />
-                <JDataRow label="FRIENDLY" value="12" state="success" />
-              </>
-            ),
-          },
-
-          // ── BOTTOM STRIP — small secondary instruments ────────
-          {
-            id: 'hex1',
-            x: 260, y: 420,
-            width: 90,
-            color: 'cyan',
-            title: 'SPEED',
-            content: <HexCell value="M1.8" label="MACH" state="ok" />,
-          },
-          {
-            id: 'hex2',
-            x: 370, y: 420,
-            width: 90,
-            color: 'amber',
-            title: 'FUEL',
-            content: <HexCell value="47%" label="FUEL" state="warn" />,
-          },
-        ]}
-      />
-
-      {/* KPI ticker is always full-width at the very bottom — outside the canvas */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50 }}>
-        <JKPITicker items={kpiItems} color="cyan" height={32} />
-      </div>
-    </>
-  )
-}
-```
-
----
-
-### Widget Placement Zones (Iron Man / SHIELD HUD Design Rules)
-
-The actual Iron Man HUD designers (Jayse Hansen, Kent Seki at The Orphanage) used **zones**, not grid columns. Apply these zones to every Movies-mode layout:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  [LOGO + CLOCK]         [PRIMARY WIDGET]      [ALERTS]      │
-│  top-left zone          center zone (LARGE)   top-right     │
-│  JHudClock              RadarWidget /          JAlert        │
-│  identity               JNodeGraph /           JWaveform     │
-│                         JHeatmap                             │
-│  [ARC REACTOR]          [PRIMARY WIDGET]      [ACTIVITY]    │
-│  [JArcMeter ×4]         center zone (cont.)   FEED]         │
-│  left column                                  JActivityFeed  │
-│  power gauges                                 right column   │
-│                                                              │
-│  [HEX] [HEX] [HEX]    [TARGET] [TARGET]     [DATAROWS]    │
-│  bottom strip           reticles               stat rows     │
-│  small instruments      TargetLock ×N          JDataRow ×N   │
-│──────────────────────────────────────────────────────────────│
-│  [ JKPITicker ────────────────────────────────────────────] │
-│  bottom bar — full width, always scrolling telemetry         │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Zone rules — apply every time:**
-
-| Zone | What goes here | Components | Typical x/y |
-|---|---|---|---|
-| **Top-left** | Identity, logo, clock, date | `JHudClock`, SHIELD SVG logo | x:30, y:28 |
-| **Left column** | System gauges, meters, fuel | `JArcReactor`, `JArcMeter` 4-up, `JHudLabel` stack | x:30, y:200+ |
-| **Center** | The ONE primary instrument — always the largest widget on screen | `RadarWidget`, `JNodeGraph`, `JHeatmap`, `JGaugeChart` | x:260, y:28 |
-| **Top-right** | Alerts, comms status | `JAlert`, `JWaveform`, `JBadge` cluster | x:640, y:28 |
-| **Right column** | Live data stream | `JActivityFeed`, `JSparkline`, `JDataRow` stack | x:640, y:120+ |
-| **Bottom strip** | Small secondary instruments | `HexCell`, `TargetLock`, `JArcMeter` singles | x:260+, y:420+ |
-| **Bottom bar** | Scrolling telemetry | `JKPITicker` (fixed, full-width, outside canvas) | fixed bottom:0 |
-
-**Spacing rules — mandatory:**
-- Widgets must **NOT touch each other**. Dark space between widgets is intentional — the darkness IS part of the UI aesthetic.
-- **Size = importance**: the primary center widget is 2–3× the size of secondary widgets.
-- No widget ever fills 100% width except `JKPITicker` at the bottom bar.
-- All widgets in `JHudCanvas` are drag-repositionable — this is the Rainmeter philosophy, preserve it.
-
----
-
-### Component → Cockpit Instrument Mapping
-
-When a data requirement arrives, ask: **"What instrument does this resemble on a cockpit panel?"** Then pick the right widget and place it in the right zone.
-
-| Data / Use Case | Widget to use | Natural Size | Zone |
-|---|---|---|---|
-| Time / date | `JHudClock` | 140×160px | Top-left |
-| Power / energy / capacity | `JArcReactor` | 120×120px | Left column |
-| CPU / RAM / fuel / % metrics | `JArcMeter` (4-up inside widget) | 200px wide | Left column |
-| Spatial / location / contacts | `RadarWidget` (canvas) | 280×280px | **Center** |
-| Node relationships / network | `JNodeGraph` | 320px+ | **Center** |
-| Data density matrix | `JHeatmap` | flexible | **Center** or right |
-| Live log / events / telemetry | `JActivityFeed` | 280px wide | Right column |
-| KPI scrolling telemetry | `JKPITicker` | full width | Bottom bar (fixed) |
-| Quick stat numbers | `HexCell` SVG | 90×80px | Bottom strip |
-| Target acquisition reticle | `TargetLock` SVG | 72×72px | Bottom strip / center |
-| Trend sparklines | `JSparkline`, `JLineChart` | 200px wide | Right column |
-| Key-value system status | `JDataRow` stack | 160px wide | Left / right |
-| Signal / audio / comms | `JWaveform` | 200px wide | Top-right |
-| Alert / notification | `JAlert` | 240px wide | Top-right |
-| Rotating ring wrapper | `RotatingRingSVG` (local) | wraps any widget | Around center |
-| Labelled readouts | `JHudLabel` | inline | Inside left widgets |
-
----
-
-### Do NOT Use These in Movies Mode
-
-| ❌ Banned in Movies Mode | Why | Use Instead |
+| Style | Guide | Key Root Component |
 |---|---|---|
-| `JPageLayout` | Creates a traditional page | Raw `JHudCanvas` |
-| `JSidebar` | Sidebar = Typical pattern | `JRadialMenu` or bottom dock strip |
-| Top-level `display: grid` | Turns widgets into page columns | `position: absolute` via `JHudCanvas` |
-| Top-level `display: flex` as layout | Same — page thinking | `position: absolute` per widget |
-| Full-width components (except ticker) | Breaks floating widget aesthetic | Fixed natural widths per widget |
-| Scrollable page containers | HUD = fixed viewport | Everything visible at once |
-| `border-radius` anywhere | Breaks HUD aesthetic | `clip-path` polygons only |
-| Hardcoded hex colors | Breaks theme system | `var(--j-accent)` etc. |
-
----
-
-## 🛡️ SHIELD HUD Page (`PageShield`)
-
-A full cinematic HUD page in `apps/docs/src/PageShield.tsx`. Already wired as nav item `shield` in `App.tsx`.
-
-**Local widgets inside PageShield (copy these when building new pages):**
-
-| Widget | Description |
-|--------|-------------|
-| `RadarWidget` | Canvas-based radar with hex grid overlay, sweep gradient, animated blips, concentric rings |
-| `RotatingRingSVG` | SVG ring with animated tick marks (configurable RPM, forward/reverse) — wraps any content |
-| `TargetLock` | Animated corner-bracket target acquisition reticle with scan-line |
-| `HexCell` | Hexagonal SVG polygon stat cell with double-polygon depth, state-aware color |
-
-These are **local** to the docs app (not exported from the npm library). Copy from `PageShield.tsx` when building new pages.
-
-**Key techniques used:**
-- `useRef` + `requestAnimationFrame` for smooth canvas radar sweep
-- `@keyframes spinF/spinR` CSS animations for ring rotation
-- SVG `<animateTransform>` for scan-line effect in target lock
-- `clipPath` hexagon shapes with double-polygon for depth
-- Canvas hex grid via 2D trigonometry
-
----
-
-## 📦 New HUD Widgets (v1.0.1) — Library Components
-
-These are exported from `@masterdeepak15/jarvis-ui` and available via `import`:
-
-| Component | Props | Description |
-|---|---|---|
-| `JDragWidget` | `title, defaultX, defaultY, width, color, collapsible` | Standalone draggable widget panel — use when NOT using `JHudCanvas` |
-| `JHudClock` | `analog, color, size, showDate` | Analog + digital clock with rotating tick ring and hands |
-| `JArcReactor` | `level, size, color, label, animated` | Iron Man arc reactor SVG — power/capacity display with petal triangles |
-| `JHeatmap` | `data[][], color, cellSize, gap, showValue, title` | 2D grid data density heatmap with lerp color palette |
-| `JActivityFeed` | `items[], maxRows, autoScroll, showTime, showSource` | Scrolling live event log with level icons, auto-scroll, hover-pause |
-| `JKPITicker` | `items[], speed, color, height, pauseOnHover` | Horizontal scrolling KPI ticker tape with trend arrows |
-| `JHudCanvas` | `widgets[], height, showGrid, gridSize, snapToGrid, onWidgetMove` | **The root canvas for Movies mode** — drag-drop widget placement |
+| **Typical** | [references/layout-typical.md](references/layout-typical.md) | `JPageLayout` + `JSidebar` |
+| **Movies / HUD** | [references/layout-movies.md](references/layout-movies.md) | `JHudCanvas` — widgets float at `(x, y)` |
+| **SHIELD page example** | [references/layout-shield.md](references/layout-shield.md) | `PageShield` local widgets: RadarWidget, HexCell, TargetLock |
+| **Windows 11 OS Shell** | [references/layout-windows.md](references/layout-windows.md) | `JDesktop theme="windows11"` |
+| **macOS OS Shell** | [references/layout-macos.md](references/layout-macos.md) | `JDesktop theme="macos"` |
 
 ---
 
@@ -412,6 +106,8 @@ These rules apply to EVERY component and every line of custom styling:
 
 5. **JState type** (for `state` prop on display components):
    `'active'` | `'warning'` | `'error'` | `'success'`
+
+6. **Semantic color tokens for status** — use `var(--j-warn)`, `var(--j-err)`, `var(--j-ok)`, not hardcoded hex like `#febc2e`, `#ff5f57`, `#28c840`.
 
 ---
 
@@ -510,6 +206,11 @@ Read the reference file for the component you need. Each file has props, use cas
 | `JBootScreen` | [references/JBootScreen.md](references/JBootScreen.md) | 5-phase animated boot sequence overlay |
 | `JToastProvider` + `useToast` | [references/JToast.md](references/JToast.md) | Toast notification system |
 
+### OS Shell Kit
+| Component | Reference | Description |
+|-----------|-----------|-------------|
+| All OS Shell components | [references/JOSShell.md](references/JOSShell.md) | Full API: JDesktop, JWindow, JWindowManager, JTaskbar, JStartMenu, JDock, JMenuBar, JOSNotification, JFileExplorer, JTaskManager, JControlPanel |
+
 ---
 
 ## Common CSS Variables Reference
@@ -524,69 +225,15 @@ Read the reference file for the component you need. Each file has props, use cas
 --j-border-dim      /* dim border (inactive) */
 --j-text-primary    /* primary text */
 --j-text-muted      /* muted/secondary text */
+--j-warn            /* warning yellow  (use instead of #febc2e) */
+--j-err             /* error red       (use instead of #ff5f57) */
+--j-ok              /* success green   (use instead of #28c840) */
 --j-cyan            /* cyan color */
 --j-amber           /* amber color */
 --j-green           /* green color */
 --j-red             /* red color */
 --j-blue            /* blue color */
 ```
-
----
-
-## OS Shell Kit
-
-Build web UIs that look like a desktop OS — draggable/resizable windows, taskbar or dock, desktop icon grid, and pre-built app shells. See full reference: `references/JOSShell.md`
-
-### Quick Start
-
-```tsx
-import { JDesktop, JFileExplorer, JTaskManager, JControlPanel } from '@masterdeepak15/jarvis-ui'
-
-const apps = [
-  { id: 'files',  icon: '📁', label: 'Files',        component: <JFileExplorer tree={myTree} /> },
-  { id: 'tasks',  icon: '📊', label: 'Task Manager', component: <JTaskManager processes={procs} onKill={handleKill} /> },
-  { id: 'settings', icon: '⚙️', label: 'Settings',  component: <JControlPanel sections={sections} /> },
-]
-
-<div style={{ width: '100vw', height: '100vh' }}>
-  <JDesktop theme="windows11" apps={apps} />   {/* or theme="macos" */}
-</div>
-```
-
-### Key Components
-
-| Component | Purpose |
-|---|---|
-| `JDesktop` | All-in-one desktop — wraps JOSThemeProvider + JWindowManager internally |
-| `JWindowManager` + `useWindowManager()` | Window state context — open, close, minimize, maximize, focus |
-| `JWindow` | Draggable/resizable window frame (pointer capture, 8 resize handles) |
-| `JTaskbar` + `JStartMenu` | Windows 11 bottom bar + start menu flyout |
-| `JDock` + `JMenuBar` | macOS dock (bottom center) + menu bar (top) |
-| `JOSNotificationProvider` + `useOSNotify()` | Portal-based toast stack, theme-aware position |
-| `JFileExplorer` | Two-pane tree browser — you supply the data |
-| `JTaskManager` | Sortable process table with CPU/mem bars + kill button |
-| `JControlPanel` | Icon grid + search filter + settings content pane |
-
-### Themes
-
-- `theme="windows11"` — taskbar bottom, Win11 controls (right), title bar 32px
-- `theme="macos"` — menu bar top, dock bottom center, traffic lights (left), title bar 28px
-
-### Notifications
-
-```tsx
-<JOSNotificationProvider>
-  <JDesktop ... />
-</JOSNotificationProvider>
-
-// anywhere inside:
-const { notify } = useOSNotify()
-notify({ title: 'Saved', body: 'report.pdf', icon: '✅', duration: 4000 })
-```
-
-### Compact / Responsive Mode
-
-Below `compactBreakpoint` (default 900px) all windows auto-maximize and switch via taskbar/dock. Customize: `<JDesktop compactBreakpoint={700} ... />`
 
 ---
 
